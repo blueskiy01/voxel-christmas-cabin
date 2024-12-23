@@ -1,58 +1,109 @@
 import * as THREE from 'three';
 
 export const setupCabinStructure = (scene: THREE.Scene) => {
-  // Create log wall material with snow coverage effect
-  const logMaterial = new THREE.MeshStandardMaterial({ 
-    color: 0xA0522D,
+  // Materials for walls and floor
+  const logMaterial = new THREE.MeshStandardMaterial({
+    color: 0xA0522D, // Log color
     roughness: 0.9,
     metalness: 0.1,
     flatShading: true
   });
 
-  // Create snowy floor material
-  const floorMaterial = new THREE.MeshStandardMaterial({ 
-    color: 0xF8F8FF,
+  const floorMaterial = new THREE.MeshStandardMaterial({
+    color: 0xF8F8FF, // Snowy floor color
     roughness: 0.8,
     metalness: 0.1,
     flatShading: true
   });
 
   // Floor
-  const floor = new THREE.Mesh(
-    new THREE.BoxGeometry(30, 0.2, 30),
-    floorMaterial
-  );
+  const floor = new THREE.Mesh(new THREE.BoxGeometry(30, 0.2, 30), floorMaterial);
   floor.position.y = -0.1;
   scene.add(floor);
 
-  // Walls with log pattern
-  const wallGeometry = new THREE.BoxGeometry(0.2, 8, 30);
-  const leftWall = new THREE.Mesh(wallGeometry, logMaterial);
+  // Walls with "cutouts" for windows
+  const wallGeometry = new THREE.BufferGeometry();
+
+  // Function to create walls with window cutouts
+  const createWallWithWindows = (
+    width: number,
+    height: number,
+    thickness: number,
+    windowPositions: { x: number; y: number; width: number; height: number }[]
+  ) => {
+    const wallShape = new THREE.Shape();
+    wallShape.moveTo(-width / 2, -height / 2);
+    wallShape.lineTo(-width / 2, height / 2);
+    wallShape.lineTo(width / 2, height / 2);
+    wallShape.lineTo(width / 2, -height / 2);
+    wallShape.lineTo(-width / 2, -height / 2);
+
+    // Subtract windows from the wall shape
+    windowPositions.forEach((window) => {
+      const windowShape = new THREE.Shape();
+      windowShape.moveTo(window.x - window.width / 2, window.y - window.height / 2);
+      windowShape.lineTo(window.x - window.width / 2, window.y + window.height / 2);
+      windowShape.lineTo(window.x + window.width / 2, window.y + window.height / 2);
+      windowShape.lineTo(window.x + window.width / 2, window.y - window.height / 2);
+      windowShape.lineTo(window.x - window.width / 2, window.y - window.height / 2);
+      wallShape.holes.push(windowShape);
+    });
+
+    const extrudeSettings = { depth: thickness, bevelEnabled: false };
+    return new THREE.ExtrudeGeometry(wallShape, extrudeSettings);
+  };
+
+  // Left wall with window
+  const leftWallGeometry = createWallWithWindows(30, 8, 0.2, [
+    { x: 0, y: 2, width: 10, height: 5 }, // Centered window
+  ]);
+  const leftWall = new THREE.Mesh(leftWallGeometry, logMaterial);
   leftWall.position.set(-15, 4, 0);
   scene.add(leftWall);
 
-  const rightWall = new THREE.Mesh(wallGeometry, logMaterial);
+  // Right wall with window
+  const rightWallGeometry = createWallWithWindows(30, 8, 0.2, [
+    { x: 0, y: 2, width: 10, height: 5 }, // Centered window
+  ]);
+  const rightWall = new THREE.Mesh(rightWallGeometry, logMaterial);
   rightWall.position.set(15, 4, 0);
   scene.add(rightWall);
 
-  const backWallGeometry = new THREE.BoxGeometry(30, 8, 0.2);
+  // Back wall with two windows
+  const backWallGeometry = createWallWithWindows(30, 8, 0.2, [
+    { x: -8, y: 2, width: 8, height: 5 }, // Left window
+    { x: 8, y: 2, width: 8, height: 5 }, // Right window
+  ]);
   const backWall = new THREE.Mesh(backWallGeometry, logMaterial);
   backWall.position.set(0, 4, -15);
   scene.add(backWall);
 
-  // Load textures
-  const textureLoader = new THREE.TextureLoader();
-  
-  // Load dark parquet texture for walls
-  textureLoader.load('/dark-parquet-512x512.png', (texture) => {
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set(4, 4);
-    logMaterial.map = texture;
-    logMaterial.needsUpdate = true;
+  // Add window glass
+  const windowMaterial = new THREE.MeshStandardMaterial({
+    color: 0x87CEEB, // Sky blue for glass
+    opacity: 0.5,
+    transparent: true,
   });
 
-  // Load smooth sand texture for the floor
+  const addWindowGlass = (x: number, y: number, z: number, width: number, height: number, thickness: number) => {
+    const glassGeometry = new THREE.BoxGeometry(width, height, thickness);
+    const glass = new THREE.Mesh(glassGeometry, windowMaterial);
+    glass.position.set(x, y, z);
+    scene.add(glass);
+  };
+
+  // Left wall glass
+  addWindowGlass(-15, 4, 0, 10, 5, 0.1);
+
+  // Right wall glass
+  addWindowGlass(15, 4, 0, 10, 5, 0.1);
+
+  // Back wall glass
+  addWindowGlass(-8, 4, -15, 8, 5, 0.1);
+  addWindowGlass(8, 4, -15, 8, 5, 0.1);
+
+  // Floor texture
+  const textureLoader = new THREE.TextureLoader();
   textureLoader.load('/smooth-sand-128x128.png', (texture) => {
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
@@ -61,49 +112,12 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
     floorMaterial.needsUpdate = true;
   });
 
-  // Add Large Windows
-  const windowMaterial = new THREE.MeshStandardMaterial({ 
-    color: 0x87CEEB, // Sky blue color for glass
-    opacity: 0.6, 
-    transparent: true 
+  // Wall texture
+  textureLoader.load('/dark-parquet-512x512.png', (texture) => {
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set(4, 4);
+    logMaterial.map = texture;
+    logMaterial.needsUpdate = true;
   });
-
-  // Left Wall Window
-  const leftWindow = new THREE.Mesh(
-    new THREE.BoxGeometry(0.2, 5, 10), // Width, Height, Depth
-    windowMaterial
-  );
-  leftWindow.position.set(-15, 4, 0); // Centered on the left wall
-  scene.add(leftWindow);
-
-  // Right Wall Window
-  const rightWindow = new THREE.Mesh(
-    new THREE.BoxGeometry(0.2, 5, 10), // Width, Height, Depth
-    windowMaterial
-  );
-  rightWindow.position.set(15, 4, 0); // Centered on the right wall
-  scene.add(rightWindow);
-
-  // Back Wall Window
-  const backWindow = new THREE.Mesh(
-    new THREE.BoxGeometry(15, 5, 0.2), // Width, Height, Depth
-    windowMaterial
-  );
-  backWindow.position.set(0, 4, -15); // Centered on the back wall
-  scene.add(backWindow);
-
-  // Add window frames
-  const frameMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 }); // Dark wood color for frames
-
-  const createFrame = (geometry: THREE.BoxGeometry, x: number, y: number, z: number) => {
-    const frame = new THREE.Mesh(geometry, frameMaterial);
-    frame.position.set(x, y, z);
-    scene.add(frame);
-  };
-
-  // Add frames around the left window
-  createFrame(new THREE.BoxGeometry(0.2, 5.2, 0.3), -15, 4, -5.1); // Left edge
-  createFrame(new THREE.BoxGeometry(0.2, 5.2, 0.3), -15, 4, 5.1);  // Right edge
-  createFrame(new THREE.BoxGeometry(0.2, 0.3, 10.2), -15, 6.5, 0);  // Top edge
-  createFrame(new THREE.BoxGeometry(0.2, 0.3, 10.2), -15, 1.5, 0);  // Bottom edge
 };
