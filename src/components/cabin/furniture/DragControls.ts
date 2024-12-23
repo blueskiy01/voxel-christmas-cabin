@@ -12,6 +12,12 @@ export const setupDragControls = (
   const intersectionPoint = new THREE.Vector3();
   let isPlacingFurniture = false;
 
+  // Create room bounds for interaction check
+  const roomBounds = new THREE.Box3(
+    new THREE.Vector3(-15, 0, -15),
+    new THREE.Vector3(15, 8, 15)
+  );
+
   // Create delete button
   const deleteButton = document.createElement('button');
   deleteButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>`;
@@ -21,6 +27,15 @@ export const setupDragControls = (
   deleteButton.className = 'bg-white/90 p-1 rounded-full hover:bg-red-100 transition-colors';
   document.body.appendChild(deleteButton);
 
+  const isInsideRoom = (x: number, y: number) => {
+    raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
+    const point = new THREE.Vector3();
+    if (raycaster.ray.intersectPlane(plane, point)) {
+      return roomBounds.containsPoint(point);
+    }
+    return false;
+  };
+
   const onMouseDown = (event: MouseEvent) => {
     event.preventDefault();
     
@@ -29,12 +44,14 @@ export const setupDragControls = (
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
+    const isInRoom = isInsideRoom(mouse.x, mouse.y);
+    
     raycaster.setFromCamera(mouse, camera);
     
     const draggableObjects = scene.children.filter(obj => obj.userData.furniture === true);
     const intersects = raycaster.intersectObjects(draggableObjects, true);
 
-    if (intersects.length > 0) {
+    if (intersects.length > 0 && isInRoom) {
       let parent = intersects[0].object;
       while (parent.parent && !parent.userData.draggable) {
         parent = parent.parent;
@@ -45,7 +62,6 @@ export const setupDragControls = (
         isPlacingFurniture = true;
         renderer.domElement.style.cursor = 'move';
         
-        // Update delete button position
         const vector = new THREE.Vector3();
         vector.setFromMatrixPosition(selectedObject.matrixWorld);
         vector.project(camera);
@@ -65,18 +81,21 @@ export const setupDragControls = (
   const onMouseMove = (event: MouseEvent) => {
     event.preventDefault();
     
-    if (isPlacingFurniture && selectedObject) {
-      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
+    if (isPlacingFurniture && selectedObject) {
       raycaster.setFromCamera(mouse, camera);
       
       if (raycaster.ray.intersectPlane(plane, intersectionPoint)) {
+        // Constrain movement within room bounds
+        intersectionPoint.x = Math.max(-14, Math.min(14, intersectionPoint.x));
+        intersectionPoint.z = Math.max(-14, Math.min(14, intersectionPoint.z));
+        
         selectedObject.position.x = intersectionPoint.x;
         selectedObject.position.z = intersectionPoint.z;
       }
 
-      // Update delete button position
       const vector = new THREE.Vector3();
       vector.setFromMatrixPosition(selectedObject.matrixWorld);
       vector.project(camera);
@@ -95,14 +114,6 @@ export const setupDragControls = (
     renderer.domElement.style.cursor = 'auto';
   };
 
-  const onContextMenu = (event: MouseEvent) => {
-    event.preventDefault();
-    
-    if (selectedObject && selectedObject.userData.rotatable) {
-      selectedObject.rotation.y += Math.PI / 4;
-    }
-  };
-
   // Delete button click handler
   deleteButton.addEventListener('click', () => {
     if (selectedObject) {
@@ -115,13 +126,11 @@ export const setupDragControls = (
   renderer.domElement.addEventListener('mousedown', onMouseDown);
   renderer.domElement.addEventListener('mousemove', onMouseMove);
   renderer.domElement.addEventListener('mouseup', onMouseUp);
-  renderer.domElement.addEventListener('contextmenu', onContextMenu);
 
   return () => {
     renderer.domElement.removeEventListener('mousedown', onMouseDown);
     renderer.domElement.removeEventListener('mousemove', onMouseMove);
     renderer.domElement.removeEventListener('mouseup', onMouseUp);
-    renderer.domElement.removeEventListener('contextmenu', onContextMenu);
     document.body.removeChild(deleteButton);
   };
 };

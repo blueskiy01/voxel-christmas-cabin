@@ -14,12 +14,12 @@ export const setupDecorations = (scene: THREE.Scene) => {
     
     // Add ornaments to each layer
     const ornamentGeometry = new THREE.SphereGeometry(0.2, 8, 8);
-    const ornamentMaterial = new THREE.MeshLambertMaterial({
-      color: Math.random() > 0.5 ? 0xFF0000 : 0xFFD700,
-      flatShading: true
-    });
     
     for(let i = 0; i < 4; i++) {
+      const ornamentMaterial = new THREE.MeshLambertMaterial({
+        color: Math.random() > 0.5 ? 0xFF0000 : 0xFFD700,
+        flatShading: true
+      });
       const ornament = new THREE.Mesh(ornamentGeometry, ornamentMaterial);
       const angle = (i / 4) * Math.PI * 2;
       ornament.position.set(
@@ -36,12 +36,12 @@ export const setupDecorations = (scene: THREE.Scene) => {
     createTreeLayer(i + 1, 4 - (i * 0.5));
   }
 
-  // Add star on top
+  // Add glowing star on top
   const starGeometry = new THREE.OctahedronGeometry(0.5, 0);
   const starMaterial = new THREE.MeshLambertMaterial({
     color: 0xFFD700,
     emissive: 0xFFD700,
-    emissiveIntensity: 0.5,
+    emissiveIntensity: 0.8,
     flatShading: true
   });
   const star = new THREE.Mesh(starGeometry, starMaterial);
@@ -49,7 +49,7 @@ export const setupDecorations = (scene: THREE.Scene) => {
   star.rotation.y = Math.PI / 4;
   scene.add(star);
 
-  // Enhanced Fireplace
+  // Interactive Fireplace
   const fireplaceGeometry = new THREE.BoxGeometry(4, 4, 1);
   const fireplaceMaterial = new THREE.MeshLambertMaterial({ 
     color: 0x8B4513,
@@ -65,7 +65,7 @@ export const setupDecorations = (scene: THREE.Scene) => {
   mantel.position.set(5, 4, -14.4);
   scene.add(mantel);
 
-  // Animated fire glow
+  // Interactive fire
   const fireGeometry = new THREE.BoxGeometry(3, 2, 0.5);
   const fireMaterial = new THREE.MeshBasicMaterial({ 
     color: 0xFF4500,
@@ -74,21 +74,63 @@ export const setupDecorations = (scene: THREE.Scene) => {
   });
   const fire = new THREE.Mesh(fireGeometry, fireMaterial);
   fire.position.set(5, 1.5, -14.2);
+  fire.userData.isFireplace = true;
+  fire.userData.isLit = true;
   scene.add(fire);
 
-  // Add stockings
-  const createStocking = (x: number) => {
-    const stockingGeometry = new THREE.BoxGeometry(0.8, 1.2, 0.3);
-    const stockingMaterial = new THREE.MeshLambertMaterial({
-      color: 0xC41E3A,
-      flatShading: true
-    });
-    const stocking = new THREE.Mesh(stockingGeometry, stockingMaterial);
-    stocking.position.set(x, 3.2, -14.2);
-    scene.add(stocking);
-  };
+  // Add click handler for fireplace
+  const raycaster = new THREE.Raycaster();
+  const mouse = new THREE.Vector2();
 
-  createStocking(3.5);
-  createStocking(5);
-  createStocking(6.5);
+  window.addEventListener('click', (event) => {
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, scene.userData.camera);
+    const intersects = raycaster.intersectObjects([fire]);
+
+    if (intersects.length > 0) {
+      const fireObject = intersects[0].object;
+      fireObject.userData.isLit = !fireObject.userData.isLit;
+      
+      if (fireObject.userData.isLit) {
+        fireMaterial.color.setHex(0xFF4500);
+        fireMaterial.opacity = 0.8;
+        scene.userData.fireplaceLight.intensity = 1;
+      } else {
+        fireMaterial.color.setHex(0x444444);
+        fireMaterial.opacity = 0.4;
+        scene.userData.fireplaceLight.intensity = 0;
+      }
+    }
+  });
+
+  // Add snowfall
+  const snowflakeGeometry = new THREE.SphereGeometry(0.05, 8, 8);
+  const snowflakeMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFFFF });
+  const snowflakes: THREE.Mesh[] = [];
+
+  for (let i = 0; i < 100; i++) {
+    const snowflake = new THREE.Mesh(snowflakeGeometry, snowflakeMaterial);
+    snowflake.position.set(
+      Math.random() * 40 - 20,
+      Math.random() * 10 + 5,
+      Math.random() * 40 - 20
+    );
+    snowflake.userData.velocity = Math.random() * 0.02 + 0.01;
+    snowflakes.push(snowflake);
+    scene.add(snowflake);
+  }
+
+  // Animation function for snowfall
+  const animateSnow = () => {
+    snowflakes.forEach(snowflake => {
+      snowflake.position.y -= snowflake.userData.velocity;
+      if (snowflake.position.y < 0) {
+        snowflake.position.y = 15;
+      }
+    });
+    requestAnimationFrame(animateSnow);
+  };
+  animateSnow();
 };

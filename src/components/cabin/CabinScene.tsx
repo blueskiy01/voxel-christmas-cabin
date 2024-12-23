@@ -30,6 +30,7 @@ const CabinScene = () => {
     const fireplaceLight = new THREE.PointLight(0xff6b4a, 1, 10);
     fireplaceLight.position.set(5, 2, -14);
     scene.add(fireplaceLight);
+    scene.userData.fireplaceLight = fireplaceLight;
 
     const windowLight1 = new THREE.PointLight(0x4682B4, 0.5, 5);
     windowLight1.position.set(-14, 4, -5);
@@ -53,8 +54,8 @@ const CabinScene = () => {
     cameraRef.current = camera;
     camera.position.set(20, 20, 20);
     camera.lookAt(0, 0, 0);
+    scene.userData.camera = camera;
 
-    // Renderer setup
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     rendererRef.current = renderer;
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -79,7 +80,6 @@ const CabinScene = () => {
     // Setup drag controls for furniture
     setupDragControls(camera, renderer, scene);
 
-    // Animation loop
     const animate = () => {
       requestAnimationFrame(animate);
       controls.update();
