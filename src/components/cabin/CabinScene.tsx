@@ -13,46 +13,51 @@ const CabinScene = () => {
   const sceneRef = useRef<THREE.Scene | null>(null);
   const [wallTexture, setWallTexture] = useState('/dark-parquet-512x512.png');
   const [floorTexture, setFloorTexture] = useState('/smooth-sand-128x128.png');
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (!mountRef.current) return;
 
-    // Scene setup
     const scene = new THREE.Scene();
     sceneRef.current = scene;
-    scene.background = new THREE.Color(0x87CEEB); // Light blue sky color
+    scene.background = new THREE.Color(0x87CEEB);
 
-    // Setup components
     const { fireplaceLight } = setupLighting(scene);
     const camera = setupCamera();
     const renderer = setupRenderer();
     mountRef.current.appendChild(renderer.domElement);
 
-    // Controls setup
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.maxPolarAngle = Math.PI / 2.5;
     controls.minPolarAngle = Math.PI / 4;
 
-    // Initial cabin setup
-    setupCabinStructure(scene, { wallTexturePath: wallTexture, floorTexturePath: floorTexture });
-    setupDecorations(scene);
+    const initScene = async () => {
+      try {
+        await setupCabinStructure(scene, { 
+          wallTexturePath: wallTexture, 
+          floorTexturePath: floorTexture 
+        });
+        setupDecorations(scene);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error initializing scene:', error);
+        setIsLoading(false);
+      }
+    };
 
-    // Animation loop with fireplace flicker effect
+    initScene();
+
     const animate = () => {
       requestAnimationFrame(animate);
-      
-      // Animate fireplace light
       const time = Date.now() * 0.001;
       fireplaceLight.intensity = 2 + Math.sin(time * 2) * 0.3;
-      
       controls.update();
       renderer.render(scene, camera);
     };
     animate();
 
-    // Handle window resize
     const handleResize = () => {
       const aspect = window.innerWidth / window.innerHeight;
       const frustumSize = 30;
@@ -74,12 +79,15 @@ const CabinScene = () => {
     };
   }, []);
 
-  // Update textures when they change
   useEffect(() => {
     if (sceneRef.current) {
       sceneRef.current.clear();
-      setupCabinStructure(sceneRef.current, { wallTexturePath: wallTexture, floorTexturePath: floorTexture });
-      setupDecorations(sceneRef.current);
+      setupCabinStructure(sceneRef.current, { 
+        wallTexturePath: wallTexture, 
+        floorTexturePath: floorTexture 
+      }).then(() => {
+        setupDecorations(sceneRef.current!);
+      });
     }
   }, [wallTexture, floorTexture]);
 
@@ -93,6 +101,11 @@ const CabinScene = () => {
 
   return (
     <div className="relative w-full h-screen">
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black/50 text-white">
+          Loading...
+        </div>
+      )}
       <div ref={mountRef} className="w-full h-screen" />
       <TextureSelector 
         onSelectWallTexture={handleWallTextureChange}
