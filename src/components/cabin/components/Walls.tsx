@@ -7,8 +7,9 @@ export const createWalls = async (scene: THREE.Scene, texturePath: string) => {
 
   const wallMaterial = new THREE.MeshStandardMaterial({
     map: texture,
-    roughness: 0.5,
+    roughness: 0.7,
     metalness: 0.1,
+    side: THREE.DoubleSide
   });
 
   // Left wall

@@ -7,6 +7,8 @@ export const loadTexture = (path: string): Promise<THREE.Texture> => {
       path,
       (texture) => {
         texture.colorSpace = THREE.SRGBColorSpace;
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
         resolve(texture);
       },
       undefined,
@@ -16,8 +18,6 @@ export const loadTexture = (path: string): Promise<THREE.Texture> => {
 };
 
 export const setupTexture = (texture: THREE.Texture, repeatX: number, repeatY: number) => {
-  texture.wrapS = THREE.RepeatWrapping;
-  texture.wrapT = THREE.RepeatWrapping;
   texture.repeat.set(repeatX, repeatY);
   return texture;
 };

@@ -7,8 +7,9 @@ export const createFloor = async (scene: THREE.Scene, texturePath: string) => {
 
   const floorMaterial = new THREE.MeshStandardMaterial({
     map: texture,
-    roughness: 0.6,
+    roughness: 0.7,
     metalness: 0.1,
+    side: THREE.DoubleSide
   });
 
   const floor = new THREE.Mesh(
