@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { createWindowFrameMaterial } from '../materials/CabinMaterials';
-import { CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer';
+import { CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
 import RadioPlayer from '../RadioPlayer';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
