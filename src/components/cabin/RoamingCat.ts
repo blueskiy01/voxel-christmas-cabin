@@ -88,9 +88,13 @@ export const createRoamingCat = (scene: THREE.Scene) => {
       catPos.y = 0.3 + Math.sin(Date.now() * 0.004) * 0.1;
       
       // Animate tail
-      const tail = bodyGeometry.children.find(child => child.geometry instanceof THREE.TubeGeometry);
+      const tail = bodyGeometry.children.find(child => {
+        const mesh = child as THREE.Mesh;
+        return mesh.geometry instanceof THREE.TubeGeometry;
+      });
+      
       if (tail) {
-        tail.rotation.z = Math.sin(Date.now() * 0.008) * 0.2;
+        (tail as THREE.Mesh).rotation.z = Math.sin(Date.now() * 0.008) * 0.2;
       }
     }
   };
