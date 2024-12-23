@@ -12,6 +12,7 @@ const CabinScene = () => {
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.OrthographicCamera | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+  const controlsRef = useRef<OrbitControls | null>(null);
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -70,10 +71,14 @@ const CabinScene = () => {
 
     // Controls
     const controls = new OrbitControls(camera, renderer.domElement);
+    controlsRef.current = controls;
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.maxPolarAngle = Math.PI / 2.5;
     controls.minPolarAngle = Math.PI / 4;
+    
+    // Store controls reference on the renderer element
+    (renderer.domElement as any).orbitControls = controls;
 
     // Add cabin structure, decorations, and animals
     setupCabinStructure(scene);
@@ -116,7 +121,12 @@ const CabinScene = () => {
   }, []);
 
   return (
-    <div ref={mountRef} className="w-full h-full" />
+    <div ref={mountRef} className="w-full h-full">
+      <div className="absolute top-4 right-4 bg-black/50 text-white p-2 rounded">
+        <p>Feed the cat by clicking on it!</p>
+        <p>Food bowl level: <span id="foodLevel">0</span>%</p>
+      </div>
+    </div>
   );
 };
 
