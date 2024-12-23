@@ -37,6 +37,11 @@ const FURNITURE_PRESETS: Record<FurnitureType, FurniturePreset> = {
   }
 };
 
+// Export available furniture names for the UI
+export const AVAILABLE_FURNITURE = Object.values(FURNITURE_PRESETS)
+  .map(preset => preset.aliases?.[0])
+  .filter(Boolean) as string[];
+
 const findFurnitureType = (searchTerm: string): FurnitureType | undefined => {
   const normalizedSearch = searchTerm.toLowerCase().trim();
   
@@ -51,7 +56,7 @@ export const createFurniture = (scene: THREE.Scene, name: string) => {
   const furnitureType = findFurnitureType(name);
   
   if (!furnitureType) {
-    console.warn(`Unknown furniture type: ${name}. Available types: ${Object.keys(FURNITURE_PRESETS).join(', ')}`);
+    console.warn(`Unknown furniture type: ${name}. Available types: ${AVAILABLE_FURNITURE.join(', ')}`);
     return null;
   }
 
@@ -63,8 +68,9 @@ export const createFurniture = (scene: THREE.Scene, name: string) => {
   furniture.position.x = (Math.random() - 0.5) * 10;
   furniture.position.z = (Math.random() - 0.5) * 10;
   
-  // Make furniture draggable
+  // Make furniture draggable and rotatable
   furniture.userData.draggable = true;
+  furniture.userData.rotatable = true;
   
   scene.add(furniture);
   return furniture;

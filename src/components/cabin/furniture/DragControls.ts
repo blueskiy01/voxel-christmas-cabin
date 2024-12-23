@@ -65,9 +65,24 @@ export const setupDragControls = (
   const onContextMenu = (event: MouseEvent) => {
     event.preventDefault();
     
-    if (selectedObject) {
-      // Rotate 45 degrees on right click
-      selectedObject.rotation.y += Math.PI / 4;
+    // Get the object under the cursor
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+    const rotatableObjects = scene.children.filter(obj => obj.userData.rotatable);
+    const intersects = raycaster.intersectObjects(rotatableObjects, true);
+
+    if (intersects.length > 0) {
+      let parent = intersects[0].object;
+      while (parent.parent && !parent.userData.rotatable) {
+        parent = parent.parent;
+      }
+      
+      if (parent.userData.rotatable) {
+        // Rotate 45 degrees on right click
+        parent.rotation.y += Math.PI / 4;
+      }
     }
   };
 
