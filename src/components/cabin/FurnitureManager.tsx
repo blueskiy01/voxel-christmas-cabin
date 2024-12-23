@@ -66,6 +66,7 @@ export const createFurniture = (scene: THREE.Scene, name: string) => {
   furniture.position.x = (Math.random() - 0.5) * 10;
   furniture.position.z = (Math.random() - 0.5) * 10;
   
+  // Mark as furniture and make it interactive
   furniture.userData.furniture = true;
   furniture.userData.draggable = true;
   furniture.userData.rotatable = true;
