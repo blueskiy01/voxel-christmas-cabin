@@ -1,30 +1,30 @@
 import * as THREE from 'three';
 
 export const setupCabinStructure = (scene: THREE.Scene) => {
-  // Create brick wall material with a warm, cozy color and texture
-  const brickMaterial = new THREE.MeshStandardMaterial({ 
-    color: 0xA0522D, // Warmer brown for walls
+  // Create log wall material with snow coverage effect
+  const logMaterial = new THREE.MeshStandardMaterial({ 
+    color: 0xA0522D,
     roughness: 0.9,
     metalness: 0.1,
     flatShading: true
   });
 
-  // Create wooden floor material with a rich, warm tone
+  // Create snowy floor material
   const floorMaterial = new THREE.MeshStandardMaterial({ 
-    color: 0x8B4513, // Darker wood tone for floor
+    color: 0xF8F8FF, // Snow white
     roughness: 0.8,
     metalness: 0.1,
     flatShading: true
   });
 
   const wallTrimMaterial = new THREE.MeshStandardMaterial({
-    color: 0x8E9196, // Neutral gray for trim
+    color: 0x8E9196,
     roughness: 0.7,
     metalness: 0.2,
     flatShading: true
   });
 
-  // Floor - larger and thinner
+  // Floor
   const floor = new THREE.Mesh(
     new THREE.BoxGeometry(30, 0.2, 30),
     floorMaterial
@@ -42,25 +42,25 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   rightBaseboard.position.set(0, 0.1, 15);
   scene.add(rightBaseboard);
 
-  // Walls - thinner with brick material
+  // Walls with log pattern
   const wallGeometry = new THREE.BoxGeometry(0.2, 8, 30);
-  const leftWall = new THREE.Mesh(wallGeometry, brickMaterial);
+  const leftWall = new THREE.Mesh(wallGeometry, logMaterial);
   leftWall.position.set(-15, 4, 0);
   scene.add(leftWall);
 
-  const rightWall = new THREE.Mesh(wallGeometry, brickMaterial);
+  const rightWall = new THREE.Mesh(wallGeometry, logMaterial);
   rightWall.position.set(15, 4, 0);
   scene.add(rightWall);
 
   const backWallGeometry = new THREE.BoxGeometry(30, 8, 0.2);
-  const backWall = new THREE.Mesh(backWallGeometry, brickMaterial);
+  const backWall = new THREE.Mesh(backWallGeometry, logMaterial);
   backWall.position.set(0, 4, -15);
   scene.add(backWall);
 
-  // Add window frames
+  // Window frames
   const windowFrameGeometry = new THREE.BoxGeometry(2, 3, 0.3);
   const windowMaterial = new THREE.MeshStandardMaterial({
-    color: 0xFEF7CD, // Soft yellow for windows
+    color: 0xFEF7CD,
     roughness: 0.5,
     metalness: 0.3,
     flatShading: true,
@@ -77,10 +77,10 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   leftWindow2.position.set(-14.9, 4, 5);
   scene.add(leftWindow2);
 
-  // Add window sills
+  // Window sills
   const sillGeometry = new THREE.BoxGeometry(0.4, 0.2, 2.2);
   const sillMaterial = new THREE.MeshStandardMaterial({
-    color: 0x8E9196, // Neutral gray for sills
+    color: 0x8E9196,
     roughness: 0.7,
     metalness: 0.2,
     flatShading: true
@@ -94,19 +94,20 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   leftSill2.position.set(-14.8, 2.4, 5);
   scene.add(leftSill2);
 
-  // Add texture to the walls
-  const brickPattern = new THREE.TextureLoader();
-  brickPattern.load('/brick-pattern.png', (texture) => {
+  // Load textures
+  const textureLoader = new THREE.TextureLoader();
+  
+  // Load log pattern texture
+  textureLoader.load('/log-pattern.png', (texture) => {
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
     texture.repeat.set(4, 4);
-    brickMaterial.map = texture;
-    brickMaterial.needsUpdate = true;
+    logMaterial.map = texture;
+    logMaterial.needsUpdate = true;
   });
 
-  // Add wood texture to the floor
-  const woodPattern = new THREE.TextureLoader();
-  woodPattern.load('/wood-pattern.png', (texture) => {
+  // Load snow texture for the floor
+  textureLoader.load('/snow-pattern.png', (texture) => {
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
     texture.repeat.set(8, 8);
