@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 
 export const setupCabinStructure = (scene: THREE.Scene) => {
-  // Create brick wall material with a warm, cozy color
+  // Create brick wall material with a warm, cozy color and texture
   const brickMaterial = new THREE.MeshStandardMaterial({ 
-    color: 0xFDE1D3, // Soft peach for walls
+    color: 0xA0522D, // Warmer brown for walls
     roughness: 0.9,
     metalness: 0.1,
     flatShading: true
@@ -11,7 +11,7 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
 
   // Create wooden floor material with a rich, warm tone
   const floorMaterial = new THREE.MeshStandardMaterial({ 
-    color: 0xFEC6A1, // Soft orange for wooden floor
+    color: 0x8B4513, // Darker wood tone for floor
     roughness: 0.8,
     metalness: 0.1,
     flatShading: true
@@ -63,7 +63,9 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
     color: 0xFEF7CD, // Soft yellow for windows
     roughness: 0.5,
     metalness: 0.3,
-    flatShading: true
+    flatShading: true,
+    transparent: true,
+    opacity: 0.6
   });
 
   // Left wall windows
@@ -91,4 +93,24 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   const leftSill2 = new THREE.Mesh(sillGeometry, sillMaterial);
   leftSill2.position.set(-14.8, 2.4, 5);
   scene.add(leftSill2);
+
+  // Add texture to the walls
+  const brickPattern = new THREE.TextureLoader();
+  brickPattern.load('/brick-pattern.png', (texture) => {
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set(4, 4);
+    brickMaterial.map = texture;
+    brickMaterial.needsUpdate = true;
+  });
+
+  // Add wood texture to the floor
+  const woodPattern = new THREE.TextureLoader();
+  woodPattern.load('/wood-pattern.png', (texture) => {
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set(8, 8);
+    floorMaterial.map = texture;
+    floorMaterial.needsUpdate = true;
+  });
 };
