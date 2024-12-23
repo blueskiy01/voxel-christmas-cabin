@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer';
 import { setupCabinStructure } from './CabinStructure';
 import { setupDecorations } from './CabinDecorations';
 import { setupDragControls } from './FurnitureManager';
@@ -12,6 +13,7 @@ const CabinScene = () => {
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.OrthographicCamera | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+  const labelRendererRef = useRef<CSS2DRenderer | null>(null);
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -65,6 +67,15 @@ const CabinScene = () => {
     mountRef.current.innerHTML = '';
     mountRef.current.appendChild(renderer.domElement);
 
+    // CSS2D Renderer setup
+    const labelRenderer = new CSS2DRenderer();
+    labelRendererRef.current = labelRenderer;
+    labelRenderer.setSize(window.innerWidth, window.innerHeight);
+    labelRenderer.domElement.style.position = 'absolute';
+    labelRenderer.domElement.style.top = '0';
+    labelRenderer.domElement.style.pointerEvents = 'none';
+    mountRef.current.appendChild(labelRenderer.domElement);
+
     // Store scene reference for external access
     (mountRef.current as any).__three = scene;
 
@@ -91,6 +102,7 @@ const CabinScene = () => {
         scene.userData.animate();
       }
       renderer.render(scene, camera);
+      labelRenderer.render(scene, camera);
     };
     animate();
 
@@ -105,12 +117,14 @@ const CabinScene = () => {
       
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
+      labelRenderer.setSize(window.innerWidth, window.innerHeight);
     };
     window.addEventListener('resize', handleResize);
 
     return () => {
       window.removeEventListener('resize', handleResize);
       mountRef.current?.removeChild(renderer.domElement);
+      mountRef.current?.removeChild(labelRenderer.domElement);
       scene.clear();
     };
   }, []);
