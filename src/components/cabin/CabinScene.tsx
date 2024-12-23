@@ -5,6 +5,7 @@ import { setupCabinStructure } from './CabinStructure';
 import { setupDecorations } from './CabinDecorations';
 import { setupDragControls } from './FurnitureManager';
 import { createRoamingCat } from './RoamingCat';
+import { createAnimatedPigeon } from './PigeonAnimation';
 
 const CabinScene = () => {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -74,10 +75,11 @@ const CabinScene = () => {
     controls.maxPolarAngle = Math.PI / 2.5;
     controls.minPolarAngle = Math.PI / 4;
 
-    // Add cabin structure and decorations
+    // Add cabin structure, decorations, and animals
     setupCabinStructure(scene);
     setupDecorations(scene);
     createRoamingCat(scene);
+    createAnimatedPigeon(scene);
 
     // Setup drag controls for furniture
     setupDragControls(camera, renderer, scene);
