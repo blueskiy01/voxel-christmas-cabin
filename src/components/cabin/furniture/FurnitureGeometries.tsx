@@ -5,7 +5,7 @@ export const createChairGeometry = () => {
 
   // Seat
   const seat = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 0.1, 1),
+    new THREE.BoxGeometry(0.8, 0.1, 0.8),
     new THREE.MeshStandardMaterial({ color: 0x8B4513 })
   );
   seat.position.y = 0.5;
@@ -13,10 +13,10 @@ export const createChairGeometry = () => {
 
   // Backrest
   const backrest = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 1.2, 0.1),
+    new THREE.BoxGeometry(0.8, 1.2, 0.1),
     new THREE.MeshStandardMaterial({ color: 0x8B4513 })
   );
-  backrest.position.set(0, 1.1, -0.45);
+  backrest.position.set(0, 1.1, -0.35);
   group.add(backrest);
 
   // Legs
@@ -24,10 +24,10 @@ export const createChairGeometry = () => {
   const legMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
   
   const positions = [
-    [-0.4, 0.25, 0.4],
-    [0.4, 0.25, 0.4],
-    [-0.4, 0.25, -0.4],
-    [0.4, 0.25, -0.4]
+    [-0.3, 0.25, 0.3],
+    [0.3, 0.25, 0.3],
+    [-0.3, 0.25, -0.3],
+    [0.3, 0.25, -0.3]
   ];
 
   positions.forEach(([x, y, z]) => {
@@ -44,21 +44,21 @@ export const createTableGeometry = () => {
 
   // Table top
   const top = new THREE.Mesh(
-    new THREE.BoxGeometry(2, 0.1, 1.5),
+    new THREE.BoxGeometry(3, 0.1, 2),
     new THREE.MeshStandardMaterial({ color: 0x654321 })
   );
   top.position.y = 0.75;
   group.add(top);
 
   // Legs
-  const legGeometry = new THREE.CylinderGeometry(0.05, 0.08, 0.75, 6);
+  const legGeometry = new THREE.CylinderGeometry(0.08, 0.12, 0.75, 6);
   const legMaterial = new THREE.MeshStandardMaterial({ color: 0x654321 });
 
   const positions = [
-    [-0.9, 0.375, 0.65],
-    [0.9, 0.375, 0.65],
-    [-0.9, 0.375, -0.65],
-    [0.9, 0.375, -0.65]
+    [-1.4, 0.375, 0.9],
+    [1.4, 0.375, 0.9],
+    [-1.4, 0.375, -0.9],
+    [1.4, 0.375, -0.9]
   ];
 
   positions.forEach(([x, y, z]) => {

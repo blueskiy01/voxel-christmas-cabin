@@ -15,17 +15,18 @@ export const setupDragControls = (
   const onMouseDown = (event: MouseEvent) => {
     event.preventDefault();
     
+    // Only handle left click for dragging
+    if (event.button !== 0) return;
+    
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
     raycaster.setFromCamera(mouse, camera);
     
-    // Get all objects in the scene that can be dragged
     const draggableObjects = scene.children.filter(obj => obj.userData.draggable);
     const intersects = raycaster.intersectObjects(draggableObjects, true);
 
     if (intersects.length > 0) {
-      // Find the top-level parent that has the draggable flag
       let parent = intersects[0].object;
       while (parent.parent && !parent.userData.draggable) {
         parent = parent.parent;
@@ -49,7 +50,6 @@ export const setupDragControls = (
       raycaster.setFromCamera(mouse, camera);
       raycaster.ray.intersectPlane(plane, intersectionPoint);
       
-      // Update position while keeping the original Y position
       selectedObject.position.x = intersectionPoint.x;
       selectedObject.position.z = intersectionPoint.z;
     }
@@ -62,14 +62,25 @@ export const setupDragControls = (
     renderer.domElement.style.cursor = 'auto';
   };
 
+  const onContextMenu = (event: MouseEvent) => {
+    event.preventDefault();
+    
+    if (selectedObject) {
+      // Rotate 45 degrees on right click
+      selectedObject.rotation.y += Math.PI / 4;
+    }
+  };
+
   renderer.domElement.addEventListener('mousedown', onMouseDown);
   renderer.domElement.addEventListener('mousemove', onMouseMove);
   renderer.domElement.addEventListener('mouseup', onMouseUp);
+  renderer.domElement.addEventListener('contextmenu', onContextMenu);
 
   // Clean up function
   return () => {
     renderer.domElement.removeEventListener('mousedown', onMouseDown);
     renderer.domElement.removeEventListener('mousemove', onMouseMove);
     renderer.domElement.removeEventListener('mouseup', onMouseUp);
+    renderer.domElement.removeEventListener('contextmenu', onContextMenu);
   };
 };
