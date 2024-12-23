@@ -9,10 +9,17 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
     flatShading: true
   });
 
+  // Create floor material
+  const floorMaterial = new THREE.MeshStandardMaterial({
+    color: 0xD2B48C,
+    roughness: 0.8,
+    metalness: 0.1
+  });
+
   // Floor
   const floor = new THREE.Mesh(
     new THREE.BoxGeometry(30, 0.2, 30),
-    logMaterial
+    floorMaterial
   );
   floor.position.y = -0.1;
   scene.add(floor);
@@ -49,7 +56,7 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   for (let i = 0; i < uvs.count; i++) {
     const u = (leftWallGeometry.attributes.position.getX(i) - min.x) / range.x;
     const v = (leftWallGeometry.attributes.position.getY(i) - min.y) / range.y;
-    uvs.setXY(i, u * 4, v * 2); // Adjust the multipliers to control texture tiling
+    uvs.setXY(i, u * 4, v * 2);
   }
 
   const leftWall = new THREE.Mesh(leftWallGeometry, logMaterial);
@@ -63,7 +70,7 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   rightWall.rotation.y = -Math.PI / 2;
   scene.add(rightWall);
 
-  // Back wall with window cutouts (excluding the window behind fireplace)
+  // Back wall with window cutouts
   const backWallShape = new THREE.Shape();
   backWallShape.moveTo(-15, 0);
   backWallShape.lineTo(15, 0);
@@ -89,7 +96,7 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   for (let i = 0; i < backUVs.count; i++) {
     const u = (backWallGeometry.attributes.position.getX(i) - backMin.x) / backRange.x;
     const v = (backWallGeometry.attributes.position.getY(i) - backMin.y) / backRange.y;
-    backUVs.setXY(i, u * 4, v * 2); // Adjust the multipliers to control texture tiling
+    backUVs.setXY(i, u * 4, v * 2);
   }
 
   const backWall = new THREE.Mesh(backWallGeometry, logMaterial);
