@@ -105,40 +105,17 @@ export const setupDecorations = (scene: THREE.Scene) => {
     }
   });
 
-  // Move snowfall outside the room
+  // Add snowfall
   const snowflakeGeometry = new THREE.SphereGeometry(0.05, 8, 8);
   const snowflakeMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFFFF });
   const snowflakes: THREE.Mesh[] = [];
 
   for (let i = 0; i < 100; i++) {
     const snowflake = new THREE.Mesh(snowflakeGeometry, snowflakeMaterial);
-    // Position snowflakes outside the room
-    const side = Math.floor(Math.random() * 4); // 0: left, 1: right, 2: front, 3: back
-    let x, z;
-    
-    switch(side) {
-      case 0: // left side
-        x = -20 - Math.random() * 10;
-        z = Math.random() * 40 - 20;
-        break;
-      case 1: // right side
-        x = 20 + Math.random() * 10;
-        z = Math.random() * 40 - 20;
-        break;
-      case 2: // front
-        x = Math.random() * 40 - 20;
-        z = 20 + Math.random() * 10;
-        break;
-      default: // back
-        x = Math.random() * 40 - 20;
-        z = -20 - Math.random() * 10;
-        break;
-    }
-    
     snowflake.position.set(
-      x,
+      Math.random() * 40 - 20,
       Math.random() * 10 + 5,
-      z
+      Math.random() * 40 - 20
     );
     snowflake.userData.velocity = Math.random() * 0.02 + 0.01;
     snowflakes.push(snowflake);
