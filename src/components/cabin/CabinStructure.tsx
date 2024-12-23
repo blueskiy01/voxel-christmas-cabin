@@ -113,7 +113,7 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
     texture.repeat.set(16, 16);
-    floorMaterial.map = texture;
-    floorMaterial.needsUpdate = true;
+    logMaterial.map = texture;
+    logMaterial.needsUpdate = true;
   });
 };
