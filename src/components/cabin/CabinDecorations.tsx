@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { createFireEffect } from './effects/FireEffect';
 
 export const setupDecorations = (scene: THREE.Scene) => {
   // Enhanced Christmas Tree with star
@@ -66,11 +65,18 @@ export const setupDecorations = (scene: THREE.Scene) => {
   mantel.position.set(5, 4, -14.4);
   scene.add(mantel);
 
-  // Create realistic fire effect
-  const firePosition = new THREE.Vector3(5, 1.5, -14.2);
-  const fire = createFireEffect(scene, firePosition);
+  // Interactive fire
+  const fireGeometry = new THREE.BoxGeometry(3, 2, 0.5);
+  const fireMaterial = new THREE.MeshBasicMaterial({ 
+    color: 0xFF4500,
+    transparent: true,
+    opacity: 0.8
+  });
+  const fire = new THREE.Mesh(fireGeometry, fireMaterial);
+  fire.position.set(5, 1.5, -14.2);
   fire.userData.isFireplace = true;
   fire.userData.isLit = true;
+  scene.add(fire);
 
   // Add click handler for fireplace
   const raycaster = new THREE.Raycaster();
@@ -88,10 +94,12 @@ export const setupDecorations = (scene: THREE.Scene) => {
       fireObject.userData.isLit = !fireObject.userData.isLit;
       
       if (fireObject.userData.isLit) {
-        fireObject.visible = true;
+        fireMaterial.color.setHex(0xFF4500);
+        fireMaterial.opacity = 0.8;
         scene.userData.fireplaceLight.intensity = 1;
       } else {
-        fireObject.visible = false;
+        fireMaterial.color.setHex(0x444444);
+        fireMaterial.opacity = 0.4;
         scene.userData.fireplaceLight.intensity = 0;
       }
     }
