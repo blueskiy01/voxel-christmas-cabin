@@ -16,6 +16,22 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
     metalness: 0.1
   });
 
+  // Create window frame material
+  const windowFrameMaterial = new THREE.MeshStandardMaterial({
+    color: 0x4a3728,
+    roughness: 0.7,
+    metalness: 0.2
+  });
+
+  // Create window glass material with background color and transparency
+  const windowGlassMaterial = new THREE.MeshStandardMaterial({
+    color: 0x0EA5E9,
+    transparent: true,
+    opacity: 0.1,
+    metalness: 0.9,
+    roughness: 0.1
+  });
+
   // Create clipping planes for snow
   const leftPlane = new THREE.Plane(new THREE.Vector3(1, 0, 0), 14.9);
   const rightPlane = new THREE.Plane(new THREE.Vector3(-1, 0, 0), 14.9);
@@ -33,13 +49,21 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   floor.position.y = -0.1;
   scene.add(floor);
 
-  // Left wall (no windows)
+  // Left wall with window cutout
   const leftWallShape = new THREE.Shape();
   leftWallShape.moveTo(-15, 0);
   leftWallShape.lineTo(15, 0);
   leftWallShape.lineTo(15, 8);
   leftWallShape.lineTo(-15, 8);
   leftWallShape.lineTo(-15, 0);
+
+  // Create hole for single window
+  const leftHole1 = new THREE.Path();
+  leftHole1.moveTo(-8, 2);
+  leftHole1.lineTo(-2, 2);
+  leftHole1.lineTo(-2, 6);
+  leftHole1.lineTo(-8, 6);
+  leftWallShape.holes.push(leftHole1);
 
   const leftWallGeometry = new THREE.ShapeGeometry(leftWallShape);
   leftWallGeometry.computeBoundingBox();
@@ -56,6 +80,29 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   leftWall.rotation.y = Math.PI / 2;
   leftWall.position.set(-15, 0, 0);
   scene.add(leftWall);
+
+  // Add single window frame and glass for left wall
+  const addWindow = (x: number, z: number) => {
+    // Frame
+    const frameGeometry = new THREE.BoxGeometry(0.2, 4.2, 6.2);
+    const frame = new THREE.Mesh(frameGeometry, windowFrameMaterial);
+    frame.position.set(x, 4, z);
+    scene.add(frame);
+
+    // Glass
+    const glassGeometry = new THREE.PlaneGeometry(6, 4);
+    const glass = new THREE.Mesh(glassGeometry, windowGlassMaterial);
+    glass.position.set(x + (x < 0 ? 0.2 : -0.2), 4, z);
+    glass.rotation.y = x < 0 ? Math.PI / 2 : -Math.PI / 2;
+    
+    const glassGroup = new THREE.Group();
+    glassGroup.add(glass);
+    glassGroup.userData.isWindow = true;
+    scene.add(glassGroup);
+  };
+
+  // Add single window for left wall
+  addWindow(-14.9, -5);
 
   // Right wall (no windows)
   const rightWall = new THREE.Mesh(leftWallGeometry, logMaterial);
