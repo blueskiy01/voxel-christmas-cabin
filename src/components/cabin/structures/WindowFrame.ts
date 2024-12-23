@@ -25,16 +25,4 @@ export const createWindowFrame = (scene: THREE.Scene, x: number, z: number) => {
   const rightFrame = new THREE.Mesh(sideFrameGeometry, windowFrameMaterial);
   rightFrame.position.set(x, 4, z + 3);
   scene.add(rightFrame);
-
-  // Add artwork within the frame
-  const artworkGeometry = new THREE.PlaneGeometry(5.8, 3.7);
-  const textureLoader = new THREE.TextureLoader();
-  const artworkMaterial = new THREE.MeshBasicMaterial({
-    map: textureLoader.load('https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7'),
-    side: THREE.DoubleSide
-  });
-  
-  const artwork = new THREE.Mesh(artworkGeometry, artworkMaterial);
-  artwork.position.set(x + 0.2, 4, z);
-  scene.add(artwork);
 };
