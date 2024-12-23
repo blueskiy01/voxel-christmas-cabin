@@ -1,125 +1,63 @@
 import * as THREE from 'three';
 
 export const setupCabinStructure = (scene: THREE.Scene) => {
-  // Materials for walls and floor
-  const logMaterial = new THREE.MeshStandardMaterial({
-    color: 0xA0522D, // Log color
+  // Create log wall material with snow coverage effect
+  const logMaterial = new THREE.MeshStandardMaterial({ 
+    color: 0xA0522D,
     roughness: 0.9,
     metalness: 0.1,
-    flatShading: true,
+    flatShading: true
   });
 
-  const floorMaterial = new THREE.MeshStandardMaterial({
-    color: 0xF8F8FF, // Snowy floor color
+  // Create snowy floor material
+  const floorMaterial = new THREE.MeshStandardMaterial({ 
+    color: 0xF8F8FF,
     roughness: 0.8,
     metalness: 0.1,
-    flatShading: true,
+    flatShading: true
   });
 
   // Floor
-  const floor = new THREE.Mesh(new THREE.BoxGeometry(30, 0.2, 30), floorMaterial);
+  const floor = new THREE.Mesh(
+    new THREE.BoxGeometry(30, 0.2, 30),
+    floorMaterial
+  );
   floor.position.y = -0.1;
   scene.add(floor);
 
-  // Function to create walls with window cutouts
-  const createWallWithCutouts = (
-    width: number,
-    height: number,
-    thickness: number,
-    windowPositions: { x: number; y: number; width: number; height: number }[]
-  ) => {
-    const wallShape = new THREE.Shape();
-    wallShape.moveTo(-width / 2, -height / 2);
-    wallShape.lineTo(-width / 2, height / 2);
-    wallShape.lineTo(width / 2, height / 2);
-    wallShape.lineTo(width / 2, -height / 2);
-    wallShape.lineTo(-width / 2, -height / 2);
-
-    // Subtract window cutouts from the wall shape
-    windowPositions.forEach((window) => {
-      const windowShape = new THREE.Shape();
-      windowShape.moveTo(window.x - window.width / 2, window.y - window.height / 2);
-      windowShape.lineTo(window.x - window.width / 2, window.y + window.height / 2);
-      windowShape.lineTo(window.x + window.width / 2, window.y + window.height / 2);
-      windowShape.lineTo(window.x + window.width / 2, window.y - window.height / 2);
-      windowShape.lineTo(window.x - window.width / 2, window.y - window.height / 2);
-      wallShape.holes.push(windowShape);
-    });
-
-    const extrudeSettings = { depth: thickness, bevelEnabled: false };
-    return new THREE.ExtrudeGeometry(wallShape, extrudeSettings);
-  };
-
-  // Walls
-  const wallThickness = 0.2;
-
-  // Left wall
-  const leftWallGeometry = createWallWithCutouts(30, 8, wallThickness, [
-    { x: 0, y: 2, width: 10, height: 5 }, // Centered window
-  ]);
-  const leftWall = new THREE.Mesh(leftWallGeometry, logMaterial);
-  leftWall.position.set(-15 + wallThickness / 2, 4, 0); // Position as per the original setup
-  leftWall.rotation.y = Math.PI / 2;
+  // Walls with log pattern
+  const wallGeometry = new THREE.BoxGeometry(0.2, 8, 30);
+  const leftWall = new THREE.Mesh(wallGeometry, logMaterial);
+  leftWall.position.set(-15, 4, 0);
   scene.add(leftWall);
 
-  // Right wall
-  const rightWallGeometry = createWallWithCutouts(30, 8, wallThickness, [
-    { x: 0, y: 2, width: 10, height: 5 }, // Centered window
-  ]);
-  const rightWall = new THREE.Mesh(rightWallGeometry, logMaterial);
-  rightWall.position.set(15 - wallThickness / 2, 4, 0); // Position as per the original setup
-  rightWall.rotation.y = -Math.PI / 2;
+  const rightWall = new THREE.Mesh(wallGeometry, logMaterial);
+  rightWall.position.set(15, 4, 0);
   scene.add(rightWall);
 
-  // Back wall
-  const backWallGeometry = createWallWithCutouts(30, 8, wallThickness, [
-    { x: -8, y: 2, width: 8, height: 5 }, // Left window
-    { x: 8, y: 2, width: 8, height: 5 }, // Right window
-  ]);
+  const backWallGeometry = new THREE.BoxGeometry(30, 8, 0.2);
   const backWall = new THREE.Mesh(backWallGeometry, logMaterial);
-  backWall.position.set(0, 4, -15 + wallThickness / 2); // Position as per the original setup
+  backWall.position.set(0, 4, -15);
   scene.add(backWall);
 
-  // Add window glass
-  const windowMaterial = new THREE.MeshStandardMaterial({
-    color: 0x87CEEB, // Sky blue for glass
-    opacity: 0.5,
-    transparent: true,
-  });
-
-  const addWindowGlass = (x: number, y: number, z: number, width: number, height: number, thickness: number) => {
-    const glassGeometry = new THREE.BoxGeometry(width, height, thickness);
-    const glass = new THREE.Mesh(glassGeometry, windowMaterial);
-    glass.position.set(x, y, z);
-    scene.add(glass);
-  };
-
-  // Left wall glass
-  addWindowGlass(-15 + wallThickness / 2, 4, 0, 10, 5, 0.1);
-
-  // Right wall glass
-  addWindowGlass(15 - wallThickness / 2, 4, 0, 10, 5, 0.1);
-
-  // Back wall glass
-  addWindowGlass(-8, 4, -15 + wallThickness / 2, 8, 5, 0.1);
-  addWindowGlass(8, 4, -15 + wallThickness / 2, 8, 5, 0.1);
-
-  // Floor texture
+  // Load textures
   const textureLoader = new THREE.TextureLoader();
-  textureLoader.load('/smooth-sand-128x128.png', (texture) => {
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set(16, 16);
-    floorMaterial.map = texture;
-    floorMaterial.needsUpdate = true;
-  });
-
-  // Wall texture
+  
+  // Load dark parquet texture for walls
   textureLoader.load('/dark-parquet-512x512.png', (texture) => {
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
     texture.repeat.set(4, 4);
     logMaterial.map = texture;
     logMaterial.needsUpdate = true;
+  });
+
+  // Load smooth sand texture for the floor
+  textureLoader.load('/smooth-sand-128x128.png', (texture) => {
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set(16, 16);
+    floorMaterial.map = texture;
+    floorMaterial.needsUpdate = true;
   });
 };
