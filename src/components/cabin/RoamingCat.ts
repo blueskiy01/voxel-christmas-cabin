@@ -53,13 +53,22 @@ export const createRoamingCat = (scene: THREE.Scene) => {
       catPos.y = 0.3 + Math.sin(Date.now() * 0.004) * 0.1;
 
       // Animate legs
-      const legsGroup = bodyGeometry.children.find(child => child instanceof THREE.Group && child.children[0]?.geometry instanceof THREE.CylinderGeometry) as THREE.Group;
+      const legsGroup = bodyGeometry.children.find(child => 
+        child instanceof THREE.Group && 
+        child.children[0] instanceof THREE.Mesh && 
+        child.children[0].geometry instanceof THREE.CylinderGeometry
+      ) as THREE.Group;
+      
       if (legsGroup) {
         animateLegs(legsGroup);
       }
       
       // Animate tail
-      const tail = bodyGeometry.children.find(child => child.geometry instanceof THREE.TubeGeometry) as THREE.Mesh;
+      const tail = bodyGeometry.children.find(child => 
+        child instanceof THREE.Mesh && 
+        child.geometry instanceof THREE.TubeGeometry
+      ) as THREE.Mesh;
+      
       if (tail) {
         animateTail(tail);
       }
