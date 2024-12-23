@@ -23,6 +23,15 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
     metalness: 0.2
   });
 
+  // Create window glass material
+  const windowGlassMaterial = new THREE.MeshStandardMaterial({
+    color: 0x88ccff,
+    transparent: true,
+    opacity: 0.2,
+    metalness: 0.9,
+    roughness: 0.1
+  });
+
   // Floor
   const floor = new THREE.Mesh(
     new THREE.BoxGeometry(30, 0.2, 30),
@@ -60,9 +69,9 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   const range = max.clone().sub(min);
   const uvs = leftWallGeometry.attributes.uv;
   for (let i = 0; i < uvs.count; i++) {
-    const u = (leftWallGeometry.attributes.position.getX(i) - min.x) / range.x;
-    const v = (leftWallGeometry.attributes.position.getY(i) - min.y) / range.y;
-    uvs.setXY(i, u * 2, v); // Adjusted tiling for better texture appearance
+    const u = (leftWallGeometry.attributes.position.getY(i) - min.y) / range.y; // Swapped X and Y for rotation
+    const v = (leftWallGeometry.attributes.position.getX(i) - min.x) / range.x;
+    uvs.setXY(i, u * 2, v * 2);
   }
 
   const leftWall = new THREE.Mesh(leftWallGeometry, logMaterial);
@@ -70,17 +79,25 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   leftWall.position.set(-15, 0, 0);
   scene.add(leftWall);
 
-  // Add window frames for left wall
-  const addWindowFrame = (x: number, z: number) => {
+  // Add window frames and glass for left wall
+  const addWindow = (x: number, z: number) => {
+    // Frame
     const frameGeometry = new THREE.BoxGeometry(0.2, 4.2, 6.2);
     const frame = new THREE.Mesh(frameGeometry, windowFrameMaterial);
     frame.position.set(x, 4, z);
     scene.add(frame);
+
+    // Glass
+    const glassGeometry = new THREE.PlaneGeometry(6, 4);
+    const glass = new THREE.Mesh(glassGeometry, windowGlassMaterial);
+    glass.position.set(x + (x < 0 ? 0.2 : -0.2), 4, z);
+    glass.rotation.y = x < 0 ? Math.PI / 2 : -Math.PI / 2;
+    scene.add(glass);
   };
 
-  // Add frames for left wall windows
-  addWindowFrame(-14.9, -5);
-  addWindowFrame(-14.9, 5);
+  // Add windows for left wall
+  addWindow(-14.9, -5);
+  addWindow(-14.9, 5);
 
   // Right wall with window cutouts
   const rightWall = leftWall.clone();
@@ -88,9 +105,9 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   rightWall.rotation.y = -Math.PI / 2;
   scene.add(rightWall);
 
-  // Add frames for right wall windows
-  addWindowFrame(14.9, -5);
-  addWindowFrame(14.9, 5);
+  // Add windows for right wall
+  addWindow(14.9, -5);
+  addWindow(14.9, 5);
 
   // Back wall with window cutouts
   const backWallShape = new THREE.Shape();
@@ -115,20 +132,26 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   const backRange = backMax.clone().sub(backMin);
   const backUVs = backWallGeometry.attributes.uv;
   for (let i = 0; i < backUVs.count; i++) {
-    const u = (backWallGeometry.attributes.position.getX(i) - backMin.x) / backRange.x;
-    const v = (backWallGeometry.attributes.position.getY(i) - backMin.y) / backRange.y;
-    backUVs.setXY(i, u * 2, v); // Adjusted tiling for better texture appearance
+    const u = (backWallGeometry.attributes.position.getY(i) - backMin.y) / backRange.y; // Swapped X and Y for rotation
+    const v = (backWallGeometry.attributes.position.getX(i) - backMin.x) / backRange.x;
+    backUVs.setXY(i, u * 2, v * 2);
   }
 
   const backWall = new THREE.Mesh(backWallGeometry, logMaterial);
   backWall.position.set(0, 0, -15);
   scene.add(backWall);
 
-  // Add frame for back wall window
+  // Add back window frame and glass
   const backFrameGeometry = new THREE.BoxGeometry(6.2, 4.2, 0.2);
   const backFrame = new THREE.Mesh(backFrameGeometry, windowFrameMaterial);
   backFrame.position.set(-5, 4, -14.9);
   scene.add(backFrame);
+
+  // Add back window glass
+  const backGlassGeometry = new THREE.PlaneGeometry(6, 4);
+  const backGlass = new THREE.Mesh(backGlassGeometry, windowGlassMaterial);
+  backGlass.position.set(-5, 4, -14.8);
+  scene.add(backGlass);
 
   // Load textures
   const textureLoader = new THREE.TextureLoader();
