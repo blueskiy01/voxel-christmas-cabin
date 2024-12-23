@@ -34,6 +34,28 @@ export const createRoamingCat = (scene: THREE.Scene) => {
   rightEar.rotation.x = -Math.PI / 6;
   bodyGeometry.add(rightEar);
 
+  // Add four legs
+  const legGeometry = new THREE.CylinderGeometry(0.1, 0.1, 0.4);
+  const legMaterial = new THREE.MeshPhongMaterial({ color: 0xFFA500 });
+
+  // Front legs
+  const frontLeftLeg = new THREE.Mesh(legGeometry, legMaterial);
+  frontLeftLeg.position.set(-0.3, 0.2, 0.4);
+  bodyGeometry.add(frontLeftLeg);
+
+  const frontRightLeg = new THREE.Mesh(legGeometry, legMaterial);
+  frontRightLeg.position.set(0.3, 0.2, 0.4);
+  bodyGeometry.add(frontRightLeg);
+
+  // Back legs
+  const backLeftLeg = new THREE.Mesh(legGeometry, legMaterial);
+  backLeftLeg.position.set(-0.3, 0.2, -0.4);
+  bodyGeometry.add(backLeftLeg);
+
+  const backRightLeg = new THREE.Mesh(legGeometry, legMaterial);
+  backRightLeg.position.set(0.3, 0.2, -0.4);
+  bodyGeometry.add(backRightLeg);
+
   // Tail - curved cylinder
   const tailCurve = new THREE.CatmullRomCurve3([
     new THREE.Vector3(0, 0.3, -0.6),
@@ -52,31 +74,30 @@ export const createRoamingCat = (scene: THREE.Scene) => {
   scene.add(bodyGeometry);
 
   // Animation parameters
-  const speed = 0.05; // Speed of cat movement
-  const chaseDist = 0.1; // How close the cat gets to the pigeon
+  const speed = 0.05;
+  const chaseDist = 0.1;
   
   // Store the cat in scene's userData for animation
   scene.userData.cat = {
     model: bodyGeometry,
     animate: () => {
-      if (!scene.userData.pigeon) return;
+      if (!scene.userData.bird) return;
       
-      // Get pigeon position
-      const pigeonPos = scene.userData.pigeon.getPosition();
+      // Get bird position
+      const birdPos = scene.userData.bird.getPosition();
       const catPos = bodyGeometry.position;
       
-      // Calculate direction to pigeon
+      // Calculate direction to bird
       const direction = new THREE.Vector3(
-        pigeonPos.x - catPos.x,
-        0, // Keep y movement separate
-        pigeonPos.z - catPos.z
+        birdPos.x - catPos.x,
+        0,
+        birdPos.z - catPos.z
       );
       
-      // Only move if not too close to pigeon
       if (direction.length() > chaseDist) {
         direction.normalize();
         
-        // Move towards pigeon
+        // Move towards bird
         catPos.x += direction.x * speed * 0.1;
         catPos.z += direction.z * speed * 0.1;
         
@@ -96,6 +117,16 @@ export const createRoamingCat = (scene: THREE.Scene) => {
       if (tail) {
         (tail as THREE.Mesh).rotation.z = Math.sin(Date.now() * 0.008) * 0.2;
       }
+
+      // Animate legs
+      const legs = bodyGeometry.children.filter(child => {
+        const mesh = child as THREE.Mesh;
+        return mesh.geometry instanceof THREE.CylinderGeometry;
+      });
+
+      legs.forEach((leg, index) => {
+        (leg as THREE.Mesh).position.y = 0.2 + Math.sin(Date.now() * 0.004 + index * Math.PI/2) * 0.05;
+      });
     }
   };
 

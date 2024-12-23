@@ -5,7 +5,7 @@ import { setupCabinStructure } from './CabinStructure';
 import { setupDecorations } from './CabinDecorations';
 import { setupDragControls } from './FurnitureManager';
 import { createRoamingCat } from './RoamingCat';
-import { createAnimatedPigeon } from './PigeonAnimation';
+import { createAnimatedBird } from './Bird3D';
 
 const CabinScene = () => {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -79,7 +79,7 @@ const CabinScene = () => {
     setupCabinStructure(scene);
     setupDecorations(scene);
     createRoamingCat(scene);
-    createAnimatedPigeon(scene);
+    createAnimatedBird(scene);
 
     // Setup drag controls for furniture
     setupDragControls(camera, renderer, scene);
