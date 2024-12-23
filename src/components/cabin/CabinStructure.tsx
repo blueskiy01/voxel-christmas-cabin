@@ -11,7 +11,7 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
 
   // Create snowy floor material
   const floorMaterial = new THREE.MeshStandardMaterial({ 
-    color: 0xF8F8FF, // Snow white
+    color: 0xF8F8FF,
     roughness: 0.8,
     metalness: 0.1,
     flatShading: true
@@ -97,8 +97,8 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   // Load textures
   const textureLoader = new THREE.TextureLoader();
   
-  // Load log pattern texture
-  textureLoader.load('/log-pattern.png', (texture) => {
+  // Load dark parquet texture for walls
+  textureLoader.load('/dark-parquet-512x512.png', (texture) => {
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
     texture.repeat.set(4, 4);
@@ -106,11 +106,11 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
     logMaterial.needsUpdate = true;
   });
 
-  // Load snow texture for the floor
-  textureLoader.load('/snow-pattern.png', (texture) => {
+  // Load smooth sand texture for the floor
+  textureLoader.load('/smooth-sand-128x128.png', (texture) => {
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set(8, 8);
+    texture.repeat.set(16, 16); // Increased repeat due to smaller texture size
     floorMaterial.map = texture;
     floorMaterial.needsUpdate = true;
   });
