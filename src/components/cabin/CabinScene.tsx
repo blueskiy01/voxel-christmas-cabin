@@ -62,6 +62,9 @@ const CabinScene = () => {
     mountRef.current.innerHTML = '';
     mountRef.current.appendChild(renderer.domElement);
 
+    // Store scene reference for external access
+    (mountRef.current as any).__three = scene;
+
     // Controls
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;

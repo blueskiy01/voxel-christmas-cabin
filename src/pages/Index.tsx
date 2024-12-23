@@ -1,16 +1,15 @@
 import React from 'react';
 import CabinScene from '@/components/cabin/CabinScene';
 import InteractivePrompt from '@/components/cabin/InteractiveFurniture';
+import { createFurniture } from '@/components/cabin/FurnitureManager';
 
 const Index = () => {
   const handleFurnitureAdd = (furnitureName: string) => {
-    // This function will be implemented in CabinScene
     const scene = document.querySelector('canvas')?.parentElement;
     if (scene) {
       const threeScene = (scene as any).__three;
       if (threeScene) {
-        // The existing furniture creation logic will handle this
-        console.log('Adding furniture:', furnitureName);
+        createFurniture(threeScene, furnitureName);
       }
     }
   };
