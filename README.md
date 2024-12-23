@@ -86,7 +86,7 @@ For questions or support, contact us at:
 ## Citation
 If you build upon Grovly, please use the following citation:
 ```BibTeX
-@misc{Grovly,
+@misc{Voxel Christmas Cabin,
     title = {Voxel Christmas Cabin},
     author = {Korin Lim},
     year = {2024},
