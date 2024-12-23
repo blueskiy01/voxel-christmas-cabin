@@ -19,18 +19,21 @@ const CabinScene = () => {
     sceneRef.current = scene;
     scene.background = new THREE.Color(0x87CEEB); // Light blue sky color
 
-    // Enhanced lighting setup
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.5); // Increased intensity
+    // Main ambient light
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
     scene.add(ambientLight);
 
     // Main directional light (sun)
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 2); // Increased intensity
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
     directionalLight.position.set(5, 10, 5);
     directionalLight.castShadow = true;
+    // Improve shadow quality
+    directionalLight.shadow.mapSize.width = 2048;
+    directionalLight.shadow.mapSize.height = 2048;
     scene.add(directionalLight);
 
-    // Additional fill light
-    const fillLight = new THREE.DirectionalLight(0xffffff, 1);
+    // Fill light for shadows
+    const fillLight = new THREE.DirectionalLight(0xffffff, 0.5);
     fillLight.position.set(-5, 5, -5);
     scene.add(fillLight);
 
@@ -63,10 +66,15 @@ const CabinScene = () => {
     camera.lookAt(0, 0, 0);
 
     // Renderer setup
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    const renderer = new THREE.WebGLRenderer({ 
+      antialias: true,
+      powerPreference: "high-performance"
+    });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.outputEncoding = THREE.sRGBEncoding;
     mountRef.current.appendChild(renderer.domElement);
 
     // Controls
