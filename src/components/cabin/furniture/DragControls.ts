@@ -11,6 +11,7 @@ export const setupDragControls = (
   const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0));
   const intersectionPoint = new THREE.Vector3();
   let isPlacingFurniture = false;
+  let initialYPosition = 0;
 
   // Create room bounds for interaction check
   const roomBounds = new THREE.Box3(
@@ -27,13 +28,8 @@ export const setupDragControls = (
   deleteButton.className = 'bg-white/90 p-1 rounded-full hover:bg-red-100 transition-colors';
   document.body.appendChild(deleteButton);
 
-  const isInsideRoom = (x: number, y: number) => {
-    raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
-    const point = new THREE.Vector3();
-    if (raycaster.ray.intersectPlane(plane, point)) {
-      return roomBounds.containsPoint(point);
-    }
-    return false;
+  const isInsideRoom = (point: THREE.Vector3) => {
+    return roomBounds.containsPoint(point);
   };
 
   const onMouseDown = (event: MouseEvent) => {
@@ -42,14 +38,12 @@ export const setupDragControls = (
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-    const isInRoom = isInsideRoom(mouse.x, mouse.y);
-    
     raycaster.setFromCamera(mouse, camera);
     
     const draggableObjects = scene.children.filter(obj => obj.userData.furniture === true);
     const intersects = raycaster.intersectObjects(draggableObjects, true);
 
-    if (intersects.length > 0 && isInRoom) {
+    if (intersects.length > 0) {
       let parent = intersects[0].object;
       while (parent.parent && !parent.userData.draggable) {
         parent = parent.parent;
@@ -57,6 +51,7 @@ export const setupDragControls = (
       
       if (parent.userData.draggable) {
         selectedObject = parent;
+        initialYPosition = selectedObject.position.y;
         
         // Handle right-click rotation
         if (event.button === 2) {
@@ -95,10 +90,30 @@ export const setupDragControls = (
     if (isPlacingFurniture && selectedObject) {
       raycaster.setFromCamera(mouse, camera);
       
+      // Check for intersections with existing furniture
+      const otherFurniture = scene.children.filter(obj => 
+        obj.userData.furniture === true && obj !== selectedObject
+      );
+      const furnitureIntersects = raycaster.intersectObjects(otherFurniture, true);
+      
       if (raycaster.ray.intersectPlane(plane, intersectionPoint)) {
         // Constrain movement within room bounds
         intersectionPoint.x = Math.max(-14, Math.min(14, intersectionPoint.x));
         intersectionPoint.z = Math.max(-14, Math.min(14, intersectionPoint.z));
+        
+        // If intersecting with other furniture, place on top
+        if (furnitureIntersects.length > 0) {
+          const highestY = Math.max(...furnitureIntersects.map(intersect => {
+            let parent = intersect.object;
+            while (parent.parent && !parent.userData.draggable) {
+              parent = parent.parent;
+            }
+            return parent.position.y + 1; // Add 1 unit of height for stacking
+          }));
+          selectedObject.position.y = highestY;
+        } else {
+          selectedObject.position.y = initialYPosition;
+        }
         
         selectedObject.position.x = intersectionPoint.x;
         selectedObject.position.z = intersectionPoint.z;
