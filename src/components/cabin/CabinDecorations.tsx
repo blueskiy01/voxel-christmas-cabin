@@ -65,45 +65,65 @@ export const setupDecorations = (scene: THREE.Scene) => {
   mantel.position.set(5, 4, -14.4);
   scene.add(mantel);
 
-  // Interactive fire
-  const fireGeometry = new THREE.BoxGeometry(3, 2, 0.5);
-  const fireMaterial = new THREE.MeshBasicMaterial({ 
-    color: 0xFF4500,
-    transparent: true,
-    opacity: 0.8
-  });
-  const fire = new THREE.Mesh(fireGeometry, fireMaterial);
-  fire.position.set(5, 1.5, -14.2);
-  fire.userData.isFireplace = true;
-  fire.userData.isLit = true;
-  scene.add(fire);
+  // Create dynamic fire particles
+  const fireParticles: THREE.Mesh[] = [];
+  const fireParticleCount = 50;
+  const fireGeometry = new THREE.SphereGeometry(0.1, 8, 8);
 
-  // Add click handler for fireplace
-  const raycaster = new THREE.Raycaster();
-  const mouse = new THREE.Vector2();
+  for (let i = 0; i < fireParticleCount; i++) {
+    const fireMaterial = new THREE.MeshBasicMaterial({
+      color: new THREE.Color(0xFF4500),
+      transparent: true,
+      opacity: Math.random() * 0.5 + 0.5
+    });
+    
+    const particle = new THREE.Mesh(fireGeometry, fireMaterial);
+    
+    // Set initial position within the fireplace
+    particle.position.set(
+      5 + (Math.random() - 0.5) * 2, // x: spread across fireplace width
+      1 + Math.random() * 2,         // y: start from bottom
+      -14.2                          // z: slightly in front of fireplace
+    );
+    
+    // Add custom properties for animation
+    particle.userData.velocity = Math.random() * 0.02 + 0.01;
+    particle.userData.wiggle = Math.random() * Math.PI;
+    particle.userData.originalX = particle.position.x;
+    
+    fireParticles.push(particle);
+    scene.add(particle);
+  }
 
-  window.addEventListener('click', (event) => {
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-    raycaster.setFromCamera(mouse, scene.userData.camera);
-    const intersects = raycaster.intersectObjects([fire]);
-
-    if (intersects.length > 0) {
-      const fireObject = intersects[0].object;
-      fireObject.userData.isLit = !fireObject.userData.isLit;
+  // Animation function for fire
+  const animateFire = () => {
+    fireParticles.forEach(particle => {
+      // Move particle upward
+      particle.position.y += particle.userData.velocity;
       
-      if (fireObject.userData.isLit) {
-        fireMaterial.color.setHex(0xFF4500);
-        fireMaterial.opacity = 0.8;
-        scene.userData.fireplaceLight.intensity = 1;
-      } else {
-        fireMaterial.color.setHex(0x444444);
-        fireMaterial.opacity = 0.4;
-        scene.userData.fireplaceLight.intensity = 0;
+      // Add horizontal wiggle
+      particle.userData.wiggle += 0.1;
+      particle.position.x = particle.userData.originalX + Math.sin(particle.userData.wiggle) * 0.1;
+      
+      // Update color based on height
+      const material = particle.material as THREE.MeshBasicMaterial;
+      const heightFactor = (particle.position.y - 1) / 2; // normalize height
+      material.color.setHSL(0.05 - heightFactor * 0.05, 1, 0.5 + heightFactor * 0.2);
+      
+      // Update opacity
+      material.opacity = Math.max(0, 1 - heightFactor);
+      
+      // Reset particle when it reaches the top
+      if (particle.position.y > 3) {
+        particle.position.y = 1;
+        particle.userData.wiggle = Math.random() * Math.PI;
+        material.opacity = 1;
       }
-    }
-  });
+    });
+    
+    requestAnimationFrame(animateFire);
+  };
+  animateFire();
 
   // Add snowfall
   const snowflakeGeometry = new THREE.SphereGeometry(0.05, 8, 8);
