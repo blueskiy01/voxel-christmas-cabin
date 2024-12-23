@@ -6,14 +6,14 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
     color: 0xA0522D, // Log color
     roughness: 0.9,
     metalness: 0.1,
-    flatShading: true
+    flatShading: true,
   });
 
   const floorMaterial = new THREE.MeshStandardMaterial({
     color: 0xF8F8FF, // Snowy floor color
     roughness: 0.8,
     metalness: 0.1,
-    flatShading: true
+    flatShading: true,
   });
 
   // Floor
@@ -21,11 +21,8 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   floor.position.y = -0.1;
   scene.add(floor);
 
-  // Walls with "cutouts" for windows
-  const wallGeometry = new THREE.BufferGeometry();
-
   // Function to create walls with window cutouts
-  const createWallWithWindows = (
+  const createWallWithCutouts = (
     width: number,
     height: number,
     thickness: number,
@@ -38,7 +35,7 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
     wallShape.lineTo(width / 2, -height / 2);
     wallShape.lineTo(-width / 2, -height / 2);
 
-    // Subtract windows from the wall shape
+    // Subtract window cutouts from the wall shape
     windowPositions.forEach((window) => {
       const windowShape = new THREE.Shape();
       windowShape.moveTo(window.x - window.width / 2, window.y - window.height / 2);
@@ -53,29 +50,34 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
     return new THREE.ExtrudeGeometry(wallShape, extrudeSettings);
   };
 
-  // Left wall with window
-  const leftWallGeometry = createWallWithWindows(30, 8, 0.2, [
+  // Walls
+  const wallThickness = 0.2;
+
+  // Left wall
+  const leftWallGeometry = createWallWithCutouts(30, 8, wallThickness, [
     { x: 0, y: 2, width: 10, height: 5 }, // Centered window
   ]);
   const leftWall = new THREE.Mesh(leftWallGeometry, logMaterial);
-  leftWall.position.set(-15, 4, 0);
+  leftWall.position.set(-15 + wallThickness / 2, 4, 0); // Position as per the original setup
+  leftWall.rotation.y = Math.PI / 2;
   scene.add(leftWall);
 
-  // Right wall with window
-  const rightWallGeometry = createWallWithWindows(30, 8, 0.2, [
+  // Right wall
+  const rightWallGeometry = createWallWithCutouts(30, 8, wallThickness, [
     { x: 0, y: 2, width: 10, height: 5 }, // Centered window
   ]);
   const rightWall = new THREE.Mesh(rightWallGeometry, logMaterial);
-  rightWall.position.set(15, 4, 0);
+  rightWall.position.set(15 - wallThickness / 2, 4, 0); // Position as per the original setup
+  rightWall.rotation.y = -Math.PI / 2;
   scene.add(rightWall);
 
-  // Back wall with two windows
-  const backWallGeometry = createWallWithWindows(30, 8, 0.2, [
+  // Back wall
+  const backWallGeometry = createWallWithCutouts(30, 8, wallThickness, [
     { x: -8, y: 2, width: 8, height: 5 }, // Left window
     { x: 8, y: 2, width: 8, height: 5 }, // Right window
   ]);
   const backWall = new THREE.Mesh(backWallGeometry, logMaterial);
-  backWall.position.set(0, 4, -15);
+  backWall.position.set(0, 4, -15 + wallThickness / 2); // Position as per the original setup
   scene.add(backWall);
 
   // Add window glass
@@ -93,14 +95,14 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   };
 
   // Left wall glass
-  addWindowGlass(-15, 4, 0, 10, 5, 0.1);
+  addWindowGlass(-15 + wallThickness / 2, 4, 0, 10, 5, 0.1);
 
   // Right wall glass
-  addWindowGlass(15, 4, 0, 10, 5, 0.1);
+  addWindowGlass(15 - wallThickness / 2, 4, 0, 10, 5, 0.1);
 
   // Back wall glass
-  addWindowGlass(-8, 4, -15, 8, 5, 0.1);
-  addWindowGlass(8, 4, -15, 8, 5, 0.1);
+  addWindowGlass(-8, 4, -15 + wallThickness / 2, 8, 5, 0.1);
+  addWindowGlass(8, 4, -15 + wallThickness / 2, 8, 5, 0.1);
 
   // Floor texture
   const textureLoader = new THREE.TextureLoader();
