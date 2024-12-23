@@ -65,10 +65,10 @@ export const createAnimatedBird = (scene: THREE.Scene) => {
       // Face direction of movement
       birdGroup.rotation.y = -angle;
 
-      // Animate wings
+      // Animate wings with increased flapping speed and amplitude
       const wings = [leftWing, rightWing];
       wings.forEach(wing => {
-        wing.rotation.z = Math.sin(Date.now() * 0.01) * 0.2;
+        wing.rotation.z = Math.sin(Date.now() * 0.02) * 0.4; // Doubled speed and amplitude
       });
     }
   };
