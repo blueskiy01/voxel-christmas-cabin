@@ -1,17 +1,22 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { setupCabinStructure } from './CabinStructure';
 import { setupDecorations } from './CabinDecorations';
+import TextureSelector from '../TextureSelector';
 
 const CabinScene = () => {
   const mountRef = useRef<HTMLDivElement>(null);
+  const sceneRef = useRef<THREE.Scene | null>(null);
+  const [wallTexture, setWallTexture] = useState('/dark-parquet-512x512.png');
+  const [floorTexture, setFloorTexture] = useState('/smooth-sand-128x128.png');
 
   useEffect(() => {
     if (!mountRef.current) return;
 
     // Scene setup
     const scene = new THREE.Scene();
+    sceneRef.current = scene;
     scene.background = new THREE.Color(0x2c3e50);
 
     // Enhanced lighting setup
@@ -64,8 +69,8 @@ const CabinScene = () => {
     controls.maxPolarAngle = Math.PI / 2.5; // Limit rotation
     controls.minPolarAngle = Math.PI / 4;   // Limit rotation
 
-    // Add cabin structure and decorations
-    setupCabinStructure(scene);
+    // Initial setup
+    setupCabinStructure(scene, { wallTexturePath: wallTexture, floorTexturePath: floorTexture });
     setupDecorations(scene);
 
     // Animation loop with fireplace flicker effect
@@ -103,7 +108,32 @@ const CabinScene = () => {
     };
   }, []);
 
-  return <div ref={mountRef} className="w-full h-screen" />;
+  // Update textures when they change
+  useEffect(() => {
+    if (sceneRef.current) {
+      sceneRef.current.clear();
+      setupCabinStructure(sceneRef.current, { wallTexturePath: wallTexture, floorTexturePath: floorTexture });
+      setupDecorations(sceneRef.current);
+    }
+  }, [wallTexture, floorTexture]);
+
+  const handleWallTextureChange = (texture: string) => {
+    setWallTexture(texture);
+  };
+
+  const handleFloorTextureChange = (texture: string) => {
+    setFloorTexture(texture);
+  };
+
+  return (
+    <div className="relative w-full h-screen">
+      <div ref={mountRef} className="w-full h-screen" />
+      <TextureSelector 
+        onSelectWallTexture={handleWallTextureChange}
+        onSelectFloorTexture={handleFloorTextureChange}
+      />
+    </div>
+  );
 };
 
 export default CabinScene;
