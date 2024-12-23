@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { X } from 'lucide-react';
 
 export const setupDragControls = (
   camera: THREE.Camera,
@@ -32,7 +31,8 @@ export const setupDragControls = (
 
     raycaster.setFromCamera(mouse, camera);
     
-    const draggableObjects = scene.children.filter(obj => obj.userData.draggable && obj.userData.furniture);
+    // Only get furniture objects
+    const draggableObjects = scene.children.filter(obj => obj.userData.furniture === true);
     const intersects = raycaster.intersectObjects(draggableObjects, true);
 
     if (intersects.length > 0) {
@@ -71,10 +71,12 @@ export const setupDragControls = (
       mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
       raycaster.setFromCamera(mouse, camera);
-      raycaster.ray.intersectPlane(plane, intersectionPoint);
       
-      selectedObject.position.x = intersectionPoint.x;
-      selectedObject.position.z = intersectionPoint.z;
+      // Only intersect with the ground plane
+      if (raycaster.ray.intersectPlane(plane, intersectionPoint)) {
+        selectedObject.position.x = intersectionPoint.x;
+        selectedObject.position.z = intersectionPoint.z;
+      }
 
       // Update delete button position
       const vector = new THREE.Vector3();
@@ -99,29 +101,15 @@ export const setupDragControls = (
   const onContextMenu = (event: MouseEvent) => {
     event.preventDefault();
     
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-    raycaster.setFromCamera(mouse, camera);
-    const rotatableObjects = scene.children.filter(obj => obj.userData.rotatable && obj.userData.furniture);
-    const intersects = raycaster.intersectObjects(rotatableObjects, true);
-
-    if (intersects.length > 0) {
-      let parent = intersects[0].object;
-      while (parent.parent && !parent.userData.rotatable) {
-        parent = parent.parent;
-      }
-      
-      if (parent.userData.rotatable) {
-        parent.rotation.y += Math.PI / 4;
-      }
+    if (selectedObject && selectedObject.userData.rotatable) {
+      selectedObject.rotation.y += Math.PI / 4;
     }
   };
 
   // Delete button click handler
   deleteButton.addEventListener('click', () => {
-    if (selectedObject) {
-      scene.remove(selectedObject);
+    if (selectedObject && selectedObject.parent) {
+      selectedObject.parent.remove(selectedObject);
       deleteButton.style.display = 'none';
       selectedObject = null;
     }
