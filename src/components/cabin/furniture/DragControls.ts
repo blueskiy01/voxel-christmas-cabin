@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 export const setupDragControls = (
   camera: THREE.Camera,
@@ -32,6 +33,9 @@ export const setupDragControls = (
     return roomBounds.containsPoint(point);
   };
 
+  // Get OrbitControls instance
+  const controls = (renderer.domElement as any).orbitControls as OrbitControls;
+
   const onMouseDown = (event: MouseEvent) => {
     event.preventDefault();
     
@@ -63,6 +67,7 @@ export const setupDragControls = (
         if (event.button === 0) {
           isPlacingFurniture = true;
           renderer.domElement.style.cursor = 'move';
+          if (controls) controls.enabled = false; // Disable OrbitControls while dragging
         }
         
         const vector = new THREE.Vector3();
@@ -135,6 +140,7 @@ export const setupDragControls = (
     event.preventDefault();
     isPlacingFurniture = false;
     renderer.domElement.style.cursor = 'auto';
+    if (controls) controls.enabled = true; // Re-enable OrbitControls after dragging
   };
 
   // Delete button click handler
