@@ -1,24 +1,26 @@
 import * as THREE from 'three';
 
 export const setupCabinStructure = (scene: THREE.Scene) => {
-  // Create brick wall material with a warmer, cozy color
-  const brickMaterial = new THREE.MeshLambertMaterial({ 
-    color: 0xA0522D, // Warm brick color
-    flatShading: true,
-    // Add subtle variations for brick texture effect
-    vertexColors: true 
+  // Create brick wall material with a warm, cozy color
+  const brickMaterial = new THREE.MeshStandardMaterial({ 
+    color: 0xFDE1D3, // Soft peach for walls
+    roughness: 0.9,
+    metalness: 0.1,
+    flatShading: true
   });
 
   // Create wooden floor material with a rich, warm tone
-  const floorMaterial = new THREE.MeshLambertMaterial({ 
-    color: 0xDEB887, // Warm wooden color
-    flatShading: true,
-    // Add wood grain effect through subtle variations
-    vertexColors: true
+  const floorMaterial = new THREE.MeshStandardMaterial({ 
+    color: 0xFEC6A1, // Soft orange for wooden floor
+    roughness: 0.8,
+    metalness: 0.1,
+    flatShading: true
   });
 
-  const wallTrimMaterial = new THREE.MeshLambertMaterial({
-    color: 0x8B4513, // Darker wood trim
+  const wallTrimMaterial = new THREE.MeshStandardMaterial({
+    color: 0x8E9196, // Neutral gray for trim
+    roughness: 0.7,
+    metalness: 0.2,
     flatShading: true
   });
 
@@ -57,8 +59,10 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
 
   // Add window frames
   const windowFrameGeometry = new THREE.BoxGeometry(2, 3, 0.3);
-  const windowMaterial = new THREE.MeshLambertMaterial({
-    color: 0x4682B4,
+  const windowMaterial = new THREE.MeshStandardMaterial({
+    color: 0xFEF7CD, // Soft yellow for windows
+    roughness: 0.5,
+    metalness: 0.3,
     flatShading: true
   });
 
@@ -73,8 +77,10 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
 
   // Add window sills
   const sillGeometry = new THREE.BoxGeometry(0.4, 0.2, 2.2);
-  const sillMaterial = new THREE.MeshLambertMaterial({
-    color: 0x8B4513,
+  const sillMaterial = new THREE.MeshStandardMaterial({
+    color: 0x8E9196, // Neutral gray for sills
+    roughness: 0.7,
+    metalness: 0.2,
     flatShading: true
   });
 
