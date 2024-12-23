@@ -14,9 +14,9 @@ const CabinScene = () => {
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x2c3e50);
 
-    // Orthographic camera for 2D-like view
+    // Orthographic camera for 2D-like view with larger frustum
     const aspect = window.innerWidth / window.innerHeight;
-    const frustumSize = 20;
+    const frustumSize = 30;
     const camera = new THREE.OrthographicCamera(
       frustumSize * aspect / -2,
       frustumSize * aspect / 2,
@@ -25,7 +25,7 @@ const CabinScene = () => {
       0.1,
       1000
     );
-    camera.position.set(10, 10, 10);
+    camera.position.set(20, 20, 20);
     camera.lookAt(0, 0, 0);
 
     // Renderer setup

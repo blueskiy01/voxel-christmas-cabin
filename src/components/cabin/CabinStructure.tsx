@@ -11,26 +11,26 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
     flatShading: true 
   });
 
-  // Floor
+  // Floor - made larger and thinner
   const floor = new THREE.Mesh(
-    new THREE.BoxGeometry(10, 1, 10),
+    new THREE.BoxGeometry(20, 0.5, 20),
     floorMaterial
   );
-  floor.position.y = -0.5;
+  floor.position.y = -0.25;
   scene.add(floor);
 
-  // Walls
-  const wallGeometry = new THREE.BoxGeometry(1, 4, 10);
+  // Walls - made taller and thinner
+  const wallGeometry = new THREE.BoxGeometry(0.5, 6, 20);
   const leftWall = new THREE.Mesh(wallGeometry, woodMaterial);
-  leftWall.position.set(-5, 2, 0);
+  leftWall.position.set(-10, 3, 0);
   scene.add(leftWall);
 
   const rightWall = new THREE.Mesh(wallGeometry, woodMaterial);
-  rightWall.position.set(5, 2, 0);
+  rightWall.position.set(10, 3, 0);
   scene.add(rightWall);
 
-  const backWallGeometry = new THREE.BoxGeometry(10, 4, 1);
+  const backWallGeometry = new THREE.BoxGeometry(20, 6, 0.5);
   const backWall = new THREE.Mesh(backWallGeometry, woodMaterial);
-  backWall.position.set(0, 2, -5);
+  backWall.position.set(0, 3, -10);
   scene.add(backWall);
 };
