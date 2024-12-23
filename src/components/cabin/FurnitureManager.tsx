@@ -4,7 +4,16 @@ import {
   createTableGeometry,
   createSofaGeometry,
   createLampGeometry,
-  createTVGeometry
+  createTVGeometry,
+  createBedGeometry,
+  createBookshelfGeometry,
+  createCabinetGeometry,
+  createRugGeometry,
+  createPlantGeometry,
+  createClockGeometry,
+  createPictureFrameGeometry,
+  createFireplaceGeometry,
+  createMirrorGeometry
 } from './furniture/FurnitureGeometries';
 import { setupDragControls } from './furniture/DragControls';
 import type { FurnitureType, FurniturePreset } from './furniture/FurnitureTypes';
@@ -34,6 +43,51 @@ const FURNITURE_PRESETS: Record<FurnitureType, FurniturePreset> = {
     create: createTVGeometry,
     position: { y: 0 },
     aliases: ['tv', 'television', 'screen', 'monitor', 'display', 'flat screen', 'smart tv']
+  },
+  bed: {
+    create: createBedGeometry,
+    position: { y: 0 },
+    aliases: ['bed', 'king bed', 'queen bed', 'bunk bed', 'single bed', 'double bed']
+  },
+  bookshelf: {
+    create: createBookshelfGeometry,
+    position: { y: 0 },
+    aliases: ['bookshelf', 'bookcase', 'shelf', 'shelving unit']
+  },
+  cabinet: {
+    create: createCabinetGeometry,
+    position: { y: 0 },
+    aliases: ['cabinet', 'storage cabinet', 'sideboard', 'cupboard']
+  },
+  rug: {
+    create: createRugGeometry,
+    position: { y: 0.01 },
+    aliases: ['rug', 'carpet', 'mat', 'area rug', 'persian rug', 'floor mat']
+  },
+  plant: {
+    create: createPlantGeometry,
+    position: { y: 0 },
+    aliases: ['plant', 'potted plant', 'indoor plant', 'house plant']
+  },
+  clock: {
+    create: createClockGeometry,
+    position: { y: 2 },
+    aliases: ['clock', 'wall clock', 'timepiece']
+  },
+  picture: {
+    create: createPictureFrameGeometry,
+    position: { y: 2 },
+    aliases: ['picture', 'frame', 'artwork', 'painting', 'wall art']
+  },
+  fireplace: {
+    create: createFireplaceGeometry,
+    position: { y: 0 },
+    aliases: ['fireplace', 'hearth', 'chimney']
+  },
+  mirror: {
+    create: createMirrorGeometry,
+    position: { y: 2 },
+    aliases: ['mirror', 'wall mirror', 'standing mirror']
   }
 };
 

@@ -188,3 +188,223 @@ export const createTVGeometry = () => {
 
   return group;
 };
+
+export const createBedGeometry = () => {
+  const group = new THREE.Group();
+
+  // Base/mattress
+  const mattress = new THREE.Mesh(
+    new THREE.BoxGeometry(2.5, 0.3, 2),
+    new THREE.MeshStandardMaterial({ color: 0xFFFFFF })
+  );
+  mattress.position.y = 0.3;
+  group.add(mattress);
+
+  // Frame
+  const frame = new THREE.Mesh(
+    new THREE.BoxGeometry(2.7, 0.2, 2.2),
+    new THREE.MeshStandardMaterial({ color: 0x8B4513 })
+  );
+  frame.position.y = 0.1;
+  group.add(frame);
+
+  // Headboard
+  const headboard = new THREE.Mesh(
+    new THREE.BoxGeometry(2.7, 1.2, 0.2),
+    new THREE.MeshStandardMaterial({ color: 0x8B4513 })
+  );
+  headboard.position.set(0, 0.7, -1.1);
+  group.add(headboard);
+
+  return group;
+};
+
+export const createBookshelfGeometry = () => {
+  const group = new THREE.Group();
+
+  // Main structure
+  const frame = new THREE.Mesh(
+    new THREE.BoxGeometry(2, 3, 0.4),
+    new THREE.MeshStandardMaterial({ color: 0x8B4513 })
+  );
+  frame.position.y = 1.5;
+  group.add(frame);
+
+  // Shelves
+  const shelfGeometry = new THREE.BoxGeometry(2, 0.05, 0.4);
+  const shelfMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
+
+  for (let i = 0; i < 4; i++) {
+    const shelf = new THREE.Mesh(shelfGeometry, shelfMaterial);
+    shelf.position.y = 0.5 + i;
+    group.add(shelf);
+  }
+
+  return group;
+};
+
+export const createCabinetGeometry = () => {
+  const group = new THREE.Group();
+
+  // Main body
+  const body = new THREE.Mesh(
+    new THREE.BoxGeometry(1.5, 2, 0.6),
+    new THREE.MeshStandardMaterial({ color: 0x8B4513 })
+  );
+  body.position.y = 1;
+  group.add(body);
+
+  // Doors
+  const doorGeometry = new THREE.BoxGeometry(0.73, 1.9, 0.05);
+  const doorMaterial = new THREE.MeshStandardMaterial({ color: 0x6B4423 });
+
+  const leftDoor = new THREE.Mesh(doorGeometry, doorMaterial);
+  leftDoor.position.set(-0.37, 1, 0.3);
+  group.add(leftDoor);
+
+  const rightDoor = new THREE.Mesh(doorGeometry, doorMaterial);
+  rightDoor.position.set(0.37, 1, 0.3);
+  group.add(rightDoor);
+
+  return group;
+};
+
+export const createRugGeometry = () => {
+  const group = new THREE.Group();
+
+  // Rug
+  const rug = new THREE.Mesh(
+    new THREE.PlaneGeometry(3, 2),
+    new THREE.MeshStandardMaterial({ 
+      color: 0x8B0000,
+      side: THREE.DoubleSide
+    })
+  );
+  rug.rotation.x = -Math.PI / 2;
+  group.add(rug);
+
+  return group;
+};
+
+export const createPlantGeometry = () => {
+  const group = new THREE.Group();
+
+  // Pot
+  const pot = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.3, 0.2, 0.4, 8),
+    new THREE.MeshStandardMaterial({ color: 0x8B4513 })
+  );
+  pot.position.y = 0.2;
+  group.add(pot);
+
+  // Plant
+  const plant = new THREE.Mesh(
+    new THREE.SphereGeometry(0.4, 8, 8),
+    new THREE.MeshStandardMaterial({ color: 0x228B22 })
+  );
+  plant.position.y = 0.6;
+  group.add(plant);
+
+  return group;
+};
+
+export const createClockGeometry = () => {
+  const group = new THREE.Group();
+
+  // Clock face
+  const face = new THREE.Mesh(
+    new THREE.CircleGeometry(0.3, 32),
+    new THREE.MeshStandardMaterial({ color: 0xFFFFFF })
+  );
+  group.add(face);
+
+  // Frame
+  const frame = new THREE.Mesh(
+    new THREE.RingGeometry(0.3, 0.35, 32),
+    new THREE.MeshStandardMaterial({ color: 0x000000 })
+  );
+  frame.position.z = 0.01;
+  group.add(frame);
+
+  return group;
+};
+
+export const createPictureFrameGeometry = () => {
+  const group = new THREE.Group();
+
+  // Picture
+  const picture = new THREE.Mesh(
+    new THREE.PlaneGeometry(1, 0.8),
+    new THREE.MeshStandardMaterial({ color: 0xF5DEB3 })
+  );
+  group.add(picture);
+
+  // Frame
+  const frame = new THREE.Mesh(
+    new THREE.BoxGeometry(1.1, 0.9, 0.05),
+    new THREE.MeshStandardMaterial({ color: 0x8B4513 })
+  );
+  frame.position.z = -0.025;
+  group.add(frame);
+
+  return group;
+};
+
+export const createFireplaceGeometry = () => {
+  const group = new THREE.Group();
+
+  // Main structure
+  const base = new THREE.Mesh(
+    new THREE.BoxGeometry(2, 1.5, 1),
+    new THREE.MeshStandardMaterial({ color: 0x808080 })
+  );
+  base.position.y = 0.75;
+  group.add(base);
+
+  // Mantel
+  const mantel = new THREE.Mesh(
+    new THREE.BoxGeometry(2.4, 0.2, 1.2),
+    new THREE.MeshStandardMaterial({ color: 0x8B4513 })
+  );
+  mantel.position.y = 1.6;
+  group.add(mantel);
+
+  // Firebox
+  const firebox = new THREE.Mesh(
+    new THREE.BoxGeometry(1.6, 1, 0.8),
+    new THREE.MeshStandardMaterial({ 
+      color: 0x000000,
+      emissive: 0xff4500,
+      emissiveIntensity: 0.5
+    })
+  );
+  firebox.position.y = 0.7;
+  group.add(firebox);
+
+  return group;
+};
+
+export const createMirrorGeometry = () => {
+  const group = new THREE.Group();
+
+  // Mirror surface
+  const mirror = new THREE.Mesh(
+    new THREE.PlaneGeometry(1, 1.5),
+    new THREE.MeshStandardMaterial({ 
+      color: 0xffffff,
+      metalness: 0.9,
+      roughness: 0.1
+    })
+  );
+  group.add(mirror);
+
+  // Frame
+  const frame = new THREE.Mesh(
+    new THREE.BoxGeometry(1.2, 1.7, 0.1),
+    new THREE.MeshStandardMaterial({ color: 0x8B4513 })
+  );
+  frame.position.z = -0.05;
+  group.add(frame);
+
+  return group;
+};
