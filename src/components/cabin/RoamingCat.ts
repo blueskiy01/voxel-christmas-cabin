@@ -1,74 +1,18 @@
 import * as THREE from 'three';
+import { createCatBody } from './cat/CatBody';
+import { createCatHead } from './cat/CatHead';
+import { createCatLegs, animateLegs } from './cat/CatLegs';
+import { createCatTail, animateTail } from './cat/CatTail';
 
 export const createRoamingCat = (scene: THREE.Scene) => {
   // Create cat body (main body + head)
   const bodyGeometry = new THREE.Group();
   
-  // Main body - longer rounded rectangle
-  const mainBody = new THREE.Mesh(
-    new THREE.BoxGeometry(0.8, 0.6, 1.6), // Made longer (1.2 -> 1.6)
-    new THREE.MeshPhongMaterial({ color: 0xFFA500 })
-  );
-  mainBody.position.y = 0.5; // Raised position to make legs more visible
-  bodyGeometry.add(mainBody);
-
-  // Head - sphere
-  const head = new THREE.Mesh(
-    new THREE.SphereGeometry(0.4, 8, 8),
-    new THREE.MeshPhongMaterial({ color: 0xFFA500 })
-  );
-  head.position.set(0, 0.7, 0.9); // Adjusted for new body length
-  bodyGeometry.add(head);
-
-  // Ears - triangular prisms
-  const earGeometry = new THREE.ConeGeometry(0.15, 0.3, 4);
-  const earMaterial = new THREE.MeshPhongMaterial({ color: 0xFFA500 });
-  
-  const leftEar = new THREE.Mesh(earGeometry, earMaterial);
-  leftEar.position.set(-0.2, 1.0, 0.9);
-  leftEar.rotation.x = -Math.PI / 6;
-  bodyGeometry.add(leftEar);
-  
-  const rightEar = new THREE.Mesh(earGeometry, earMaterial);
-  rightEar.position.set(0.2, 1.0, 0.9);
-  rightEar.rotation.x = -Math.PI / 6;
-  bodyGeometry.add(rightEar);
-
-  // Add four legs - made longer and thicker
-  const legGeometry = new THREE.CylinderGeometry(0.12, 0.12, 0.6); // Increased height and radius
-  const legMaterial = new THREE.MeshPhongMaterial({ color: 0xFFA500 });
-
-  // Front legs - positioned further apart
-  const frontLeftLeg = new THREE.Mesh(legGeometry, legMaterial);
-  frontLeftLeg.position.set(-0.3, 0.3, 0.6);
-  bodyGeometry.add(frontLeftLeg);
-
-  const frontRightLeg = new THREE.Mesh(legGeometry, legMaterial);
-  frontRightLeg.position.set(0.3, 0.3, 0.6);
-  bodyGeometry.add(frontRightLeg);
-
-  // Back legs - positioned further apart
-  const backLeftLeg = new THREE.Mesh(legGeometry, legMaterial);
-  backLeftLeg.position.set(-0.3, 0.3, -0.4);
-  bodyGeometry.add(backLeftLeg);
-
-  const backRightLeg = new THREE.Mesh(legGeometry, legMaterial);
-  backRightLeg.position.set(0.3, 0.3, -0.4);
-  bodyGeometry.add(backRightLeg);
-
-  // Tail - curved cylinder
-  const tailCurve = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(0, 0.5, -0.8),
-    new THREE.Vector3(0, 0.7, -1.0),
-    new THREE.Vector3(0, 0.9, -0.8)
-  ]);
-  
-  const tailGeometry = new THREE.TubeGeometry(tailCurve, 8, 0.1, 8, false);
-  const tail = new THREE.Mesh(
-    tailGeometry,
-    new THREE.MeshPhongMaterial({ color: 0xFFA500 })
-  );
-  bodyGeometry.add(tail);
+  // Add components
+  bodyGeometry.add(createCatBody());
+  bodyGeometry.add(createCatHead());
+  bodyGeometry.add(createCatLegs());
+  bodyGeometry.add(createCatTail());
 
   // Add cat to scene
   scene.add(bodyGeometry);
@@ -108,22 +52,16 @@ export const createRoamingCat = (scene: THREE.Scene) => {
       // Add bobbing motion
       catPos.y = 0.3 + Math.sin(Date.now() * 0.004) * 0.1;
 
-      // Animate legs with more pronounced movement
-      const legs = bodyGeometry.children.filter(child => {
-        return (child as THREE.Mesh).geometry instanceof THREE.CylinderGeometry;
-      });
-
-      legs.forEach((leg, index) => {
-        (leg as THREE.Mesh).position.y = 0.3 + Math.sin(Date.now() * 0.008 + index * Math.PI/2) * 0.1;
-      });
+      // Animate legs
+      const legsGroup = bodyGeometry.children.find(child => child instanceof THREE.Group && child.children[0]?.geometry instanceof THREE.CylinderGeometry) as THREE.Group;
+      if (legsGroup) {
+        animateLegs(legsGroup);
+      }
       
       // Animate tail
-      const tail = bodyGeometry.children.find(child => {
-        return (child as THREE.Mesh).geometry instanceof THREE.TubeGeometry;
-      });
-      
+      const tail = bodyGeometry.children.find(child => child.geometry instanceof THREE.TubeGeometry) as THREE.Mesh;
       if (tail) {
-        (tail as THREE.Mesh).rotation.z = Math.sin(Date.now() * 0.008) * 0.2;
+        animateTail(tail);
       }
     }
   };
