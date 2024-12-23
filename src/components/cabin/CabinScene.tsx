@@ -34,9 +34,17 @@ const CabinScene = () => {
     scene.add(fireplaceLight);
     scene.userData.fireplaceLight = fireplaceLight;
 
-    // Camera setup with closer zoom
+    const windowLight1 = new THREE.PointLight(0x4682B4, 0.5, 5);
+    windowLight1.position.set(-14, 4, -5);
+    scene.add(windowLight1);
+
+    const windowLight2 = new THREE.PointLight(0x4682B4, 0.5, 5);
+    windowLight2.position.set(-14, 4, 5);
+    scene.add(windowLight2);
+
+    // Camera setup
     const aspect = window.innerWidth / window.innerHeight;
-    const frustumSize = 15; // Reduced from 20 to zoom in
+    const frustumSize = 20;
     const camera = new THREE.OrthographicCamera(
       frustumSize * aspect / -2,
       frustumSize * aspect / 2,
@@ -46,7 +54,7 @@ const CabinScene = () => {
       1000
     );
     cameraRef.current = camera;
-    camera.position.set(20, 15, 20); // Adjusted camera position for better floor view
+    camera.position.set(20, 20, 20);
     camera.lookAt(0, 0, 0);
     scene.userData.camera = camera;
 
