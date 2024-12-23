@@ -25,7 +25,7 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
 
   // Create window glass material with background color and transparency
   const windowGlassMaterial = new THREE.MeshStandardMaterial({
-    color: 0x0EA5E9, // Brighter sky blue color
+    color: 0x0EA5E9,
     transparent: true,
     opacity: 0.1,
     metalness: 0.9,
@@ -104,31 +104,19 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   // Add single window for left wall
   addWindow(-14.9, -5);
 
-  // Right wall with window cutouts
-  const rightWall = leftWall.clone();
+  // Right wall (no windows)
+  const rightWall = new THREE.Mesh(leftWallGeometry, logMaterial);
   rightWall.position.set(15, 0, 0);
   rightWall.rotation.y = -Math.PI / 2;
   scene.add(rightWall);
 
-  // Add windows for right wall
-  addWindow(14.9, -5);
-  addWindow(14.9, 5);
-
-  // Back wall with window cutouts
+  // Back wall (no windows)
   const backWallShape = new THREE.Shape();
   backWallShape.moveTo(-15, 0);
   backWallShape.lineTo(15, 0);
   backWallShape.lineTo(15, 8);
   backWallShape.lineTo(-15, 8);
   backWallShape.lineTo(-15, 0);
-
-  // Create hole for back window
-  const backHole = new THREE.Path();
-  backHole.moveTo(-8, 2);
-  backHole.lineTo(-2, 2);
-  backHole.lineTo(-2, 6);
-  backHole.lineTo(-8, 6);
-  backWallShape.holes.push(backHole);
 
   const backWallGeometry = new THREE.ShapeGeometry(backWallShape);
   backWallGeometry.computeBoundingBox();
@@ -139,29 +127,12 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   for (let i = 0; i < backUVs.count; i++) {
     const u = (backWallGeometry.attributes.position.getY(i) - backMin.y) / backRange.y;
     const v = (backWallGeometry.attributes.position.getX(i) - backMin.x) / backRange.x;
-    backUVs.setXY(i, u, v); // Removed the *2 multiplier to match original zoom level
+    backUVs.setXY(i, u, v);
   }
 
   const backWall = new THREE.Mesh(backWallGeometry, logMaterial);
   backWall.position.set(0, 0, -15);
   scene.add(backWall);
-
-  // Add back window frame and glass
-  const backFrameGeometry = new THREE.BoxGeometry(6.2, 4.2, 0.2);
-  const backFrame = new THREE.Mesh(backFrameGeometry, windowFrameMaterial);
-  backFrame.position.set(-5, 4, -14.9);
-  scene.add(backFrame);
-
-  // Add back window glass with clipping
-  const backGlassGeometry = new THREE.PlaneGeometry(6, 4);
-  const backGlass = new THREE.Mesh(backGlassGeometry, windowGlassMaterial);
-  backGlass.position.set(-5, 4, -14.8);
-  
-  // Add the back glass to a separate group for snow clipping
-  const backGlassGroup = new THREE.Group();
-  backGlassGroup.add(backGlass);
-  backGlassGroup.userData.isWindow = true; // Mark as window for snow effect
-  scene.add(backGlassGroup);
 
   // Load textures
   const textureLoader = new THREE.TextureLoader();
@@ -175,11 +146,11 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
     logMaterial.needsUpdate = true;
   });
 
-  // Load smooth sand texture for the floor with original tiling
+  // Load smooth sand texture for the floor
   textureLoader.load('/smooth-sand-128x128.png', (texture) => {
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set(16, 16); // Original tiling
+    texture.repeat.set(16, 16);
     floorMaterial.map = texture;
     floorMaterial.needsUpdate = true;
   });
