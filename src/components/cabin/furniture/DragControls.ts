@@ -31,7 +31,6 @@ export const setupDragControls = (
 
     raycaster.setFromCamera(mouse, camera);
     
-    // Only get furniture objects
     const draggableObjects = scene.children.filter(obj => obj.userData.furniture === true);
     const intersects = raycaster.intersectObjects(draggableObjects, true);
 
@@ -46,7 +45,6 @@ export const setupDragControls = (
         isDragging = true;
         renderer.domElement.style.cursor = 'grabbing';
         
-        // Show delete button near the selected object
         const vector = new THREE.Vector3();
         vector.setFromMatrixPosition(selectedObject.matrixWorld);
         vector.project(camera);
@@ -72,13 +70,11 @@ export const setupDragControls = (
 
       raycaster.setFromCamera(mouse, camera);
       
-      // Only intersect with the ground plane
       if (raycaster.ray.intersectPlane(plane, intersectionPoint)) {
         selectedObject.position.x = intersectionPoint.x;
         selectedObject.position.z = intersectionPoint.z;
       }
 
-      // Update delete button position
       const vector = new THREE.Vector3();
       vector.setFromMatrixPosition(selectedObject.matrixWorld);
       vector.project(camera);
@@ -94,7 +90,6 @@ export const setupDragControls = (
   const onMouseUp = (event: MouseEvent) => {
     event.preventDefault();
     isDragging = false;
-    selectedObject = null;
     renderer.domElement.style.cursor = 'auto';
   };
 
@@ -108,10 +103,10 @@ export const setupDragControls = (
 
   // Delete button click handler
   deleteButton.addEventListener('click', () => {
-    if (selectedObject && selectedObject.parent) {
-      selectedObject.parent.remove(selectedObject);
-      deleteButton.style.display = 'none';
+    if (selectedObject) {
+      scene.remove(selectedObject);
       selectedObject = null;
+      deleteButton.style.display = 'none';
     }
   });
 
