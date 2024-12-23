@@ -25,7 +25,7 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
 
   // Create window glass material with background color and transparency
   const windowGlassMaterial = new THREE.MeshStandardMaterial({
-    color: 0x2c3e50, // Match the scene background color
+    color: 0x33C3F0, // Sky blue color for the outdoor background
     transparent: true,
     opacity: 0.1,
     metalness: 0.9,
@@ -87,12 +87,17 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
     frame.position.set(x, 4, z);
     scene.add(frame);
 
-    // Glass
+    // Glass - Create a clipping plane to prevent snow from appearing inside
     const glassGeometry = new THREE.PlaneGeometry(6, 4);
     const glass = new THREE.Mesh(glassGeometry, windowGlassMaterial);
     glass.position.set(x + (x < 0 ? 0.2 : -0.2), 4, z);
     glass.rotation.y = x < 0 ? Math.PI / 2 : -Math.PI / 2;
-    scene.add(glass);
+    
+    // Add the glass to a separate group for snow clipping
+    const glassGroup = new THREE.Group();
+    glassGroup.add(glass);
+    glassGroup.userData.isWindow = true; // Mark as window for snow effect
+    scene.add(glassGroup);
   };
 
   // Add windows for left wall
@@ -147,11 +152,16 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   backFrame.position.set(-5, 4, -14.9);
   scene.add(backFrame);
 
-  // Add back window glass
+  // Add back window glass with clipping
   const backGlassGeometry = new THREE.PlaneGeometry(6, 4);
   const backGlass = new THREE.Mesh(backGlassGeometry, windowGlassMaterial);
   backGlass.position.set(-5, 4, -14.8);
-  scene.add(backGlass);
+  
+  // Add the back glass to a separate group for snow clipping
+  const backGlassGroup = new THREE.Group();
+  backGlassGroup.add(backGlass);
+  backGlassGroup.userData.isWindow = true; // Mark as window for snow effect
+  scene.add(backGlassGroup);
 
   // Load textures
   const textureLoader = new THREE.TextureLoader();
@@ -165,11 +175,11 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
     logMaterial.needsUpdate = true;
   });
 
-  // Load smooth sand texture for the floor
+  // Load smooth sand texture for the floor with increased tiling
   textureLoader.load('/smooth-sand-128x128.png', (texture) => {
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set(16, 16);
+    texture.repeat.set(32, 32); // Increased tiling for more detail
     floorMaterial.map = texture;
     floorMaterial.needsUpdate = true;
   });
