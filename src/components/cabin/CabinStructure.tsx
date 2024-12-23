@@ -25,7 +25,7 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
 
   // Create window glass material with background color and transparency
   const windowGlassMaterial = new THREE.MeshStandardMaterial({
-    color: 0x33C3F0, // Sky blue color for the outdoor background
+    color: 0x0EA5E9, // Brighter sky blue color
     transparent: true,
     opacity: 0.1,
     metalness: 0.9,
@@ -175,11 +175,11 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
     logMaterial.needsUpdate = true;
   });
 
-  // Load smooth sand texture for the floor with increased tiling
+  // Load smooth sand texture for the floor with original tiling
   textureLoader.load('/smooth-sand-128x128.png', (texture) => {
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set(32, 32); // Increased tiling for more detail
+    texture.repeat.set(16, 16); // Reverted back to original tiling
     floorMaterial.map = texture;
     floorMaterial.needsUpdate = true;
   });
