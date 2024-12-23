@@ -3,7 +3,6 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { setupCabinStructure } from './CabinStructure';
 import { setupDecorations } from './CabinDecorations';
-import InteractivePrompt from './InteractiveFurniture';
 import { createFurniture, setupDragControls } from './FurnitureManager';
 
 const CabinScene = () => {
@@ -40,9 +39,9 @@ const CabinScene = () => {
     windowLight2.position.set(-14, 4, 5);
     scene.add(windowLight2);
 
-    // Camera setup with adjusted frustum size
+    // Camera setup
     const aspect = window.innerWidth / window.innerHeight;
-    const frustumSize = 20; // Reduced from 30 to zoom in a bit
+    const frustumSize = 20;
     const camera = new THREE.OrthographicCamera(
       frustumSize * aspect / -2,
       frustumSize * aspect / 2,
@@ -55,12 +54,12 @@ const CabinScene = () => {
     camera.position.set(20, 20, 20);
     camera.lookAt(0, 0, 0);
 
-    // Renderer setup with proper sizing
+    // Renderer setup
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     rendererRef.current = renderer;
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    mountRef.current.innerHTML = ''; // Clear any existing content
+    mountRef.current.innerHTML = '';
     mountRef.current.appendChild(renderer.domElement);
 
     // Controls
@@ -107,16 +106,8 @@ const CabinScene = () => {
     };
   }, []);
 
-  const handleFurnitureAdd = (furnitureName: string) => {
-    if (sceneRef.current) {
-      createFurniture(sceneRef.current, furnitureName);
-    }
-  };
-
   return (
-    <div ref={mountRef} className="fixed inset-0 w-full h-full">
-      <InteractivePrompt onFurnitureAdd={handleFurnitureAdd} />
-    </div>
+    <div ref={mountRef} className="w-full h-full" />
   );
 };
 
