@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import InteractivePrompt from './InteractiveFurniture';
-import { addFurniture } from './FurnitureManager';
+import { createFurniture } from './FurnitureManager';
 
 const CabinScene = () => {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -11,7 +11,7 @@ const CabinScene = () => {
 
   const handleFurnitureAdd = (furnitureName: string) => {
     if (sceneRef.current) {
-      addFurniture(sceneRef.current, furnitureName);
+      createFurniture(sceneRef.current, furnitureName);
     }
   };
 
