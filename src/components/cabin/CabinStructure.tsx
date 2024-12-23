@@ -1,11 +1,6 @@
 import * as THREE from 'three';
 
-interface CabinStructureProps {
-  wallTexturePath?: string;
-  floorTexturePath?: string;
-}
-
-export const setupCabinStructure = (scene: THREE.Scene, { wallTexturePath = '/dark-parquet-512x512.png', floorTexturePath = '/smooth-sand-128x128.png' }: CabinStructureProps = {}) => {
+export const setupCabinStructure = (scene: THREE.Scene) => {
   // Create log wall material with snow coverage effect
   const logMaterial = new THREE.MeshStandardMaterial({ 
     color: 0xA0522D,
@@ -102,8 +97,8 @@ export const setupCabinStructure = (scene: THREE.Scene, { wallTexturePath = '/da
   // Load textures
   const textureLoader = new THREE.TextureLoader();
   
-  // Load texture for walls
-  textureLoader.load(wallTexturePath, (texture) => {
+  // Load dark parquet texture for walls
+  textureLoader.load('/dark-parquet-512x512.png', (texture) => {
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
     texture.repeat.set(4, 4);
@@ -111,11 +106,11 @@ export const setupCabinStructure = (scene: THREE.Scene, { wallTexturePath = '/da
     logMaterial.needsUpdate = true;
   });
 
-  // Load texture for the floor
-  textureLoader.load(floorTexturePath, (texture) => {
+  // Load smooth sand texture for the floor
+  textureLoader.load('/smooth-sand-128x128.png', (texture) => {
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set(16, 16);
+    texture.repeat.set(16, 16); // Increased repeat due to smaller texture size
     floorMaterial.map = texture;
     floorMaterial.needsUpdate = true;
   });
