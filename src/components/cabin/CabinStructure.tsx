@@ -9,18 +9,10 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
     flatShading: true
   });
 
-  // Create snowy floor material
-  const floorMaterial = new THREE.MeshStandardMaterial({ 
-    color: 0xF8F8FF,
-    roughness: 0.8,
-    metalness: 0.1,
-    flatShading: true
-  });
-
   // Floor
   const floor = new THREE.Mesh(
     new THREE.BoxGeometry(30, 0.2, 30),
-    floorMaterial
+    logMaterial
   );
   floor.position.y = -0.1;
   scene.add(floor);
@@ -49,6 +41,17 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   leftWallShape.holes.push(leftHole2);
 
   const leftWallGeometry = new THREE.ShapeGeometry(leftWallShape);
+  // Add UV coordinates for proper texture mapping
+  leftWallGeometry.computeBoundingBox();
+  const { min, max } = leftWallGeometry.boundingBox!;
+  const range = max.clone().sub(min);
+  const uvs = leftWallGeometry.attributes.uv;
+  for (let i = 0; i < uvs.count; i++) {
+    const u = (leftWallGeometry.attributes.position.getX(i) - min.x) / range.x;
+    const v = (leftWallGeometry.attributes.position.getY(i) - min.y) / range.y;
+    uvs.setXY(i, u * 4, v * 2); // Adjust the multipliers to control texture tiling
+  }
+
   const leftWall = new THREE.Mesh(leftWallGeometry, logMaterial);
   leftWall.rotation.y = Math.PI / 2;
   leftWall.position.set(-15, 0, 0);
@@ -77,6 +80,18 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   backWallShape.holes.push(backHole);
 
   const backWallGeometry = new THREE.ShapeGeometry(backWallShape);
+  // Add UV coordinates for proper texture mapping
+  backWallGeometry.computeBoundingBox();
+  const backMin = backWallGeometry.boundingBox!.min;
+  const backMax = backWallGeometry.boundingBox!.max;
+  const backRange = backMax.clone().sub(backMin);
+  const backUVs = backWallGeometry.attributes.uv;
+  for (let i = 0; i < backUVs.count; i++) {
+    const u = (backWallGeometry.attributes.position.getX(i) - backMin.x) / backRange.x;
+    const v = (backWallGeometry.attributes.position.getY(i) - backMin.y) / backRange.y;
+    backUVs.setXY(i, u * 4, v * 2); // Adjust the multipliers to control texture tiling
+  }
+
   const backWall = new THREE.Mesh(backWallGeometry, logMaterial);
   backWall.position.set(0, 0, -15);
   scene.add(backWall);
