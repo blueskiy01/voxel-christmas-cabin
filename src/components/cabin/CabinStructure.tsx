@@ -23,11 +23,11 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
     metalness: 0.2
   });
 
-  // Create window glass material
+  // Create window glass material with increased transparency and brightness
   const windowGlassMaterial = new THREE.MeshStandardMaterial({
-    color: 0x88ccff,
+    color: 0xffffff,
     transparent: true,
-    opacity: 0.2,
+    opacity: 0.1,
     metalness: 0.9,
     roughness: 0.1
   });
@@ -69,9 +69,9 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   const range = max.clone().sub(min);
   const uvs = leftWallGeometry.attributes.uv;
   for (let i = 0; i < uvs.count; i++) {
-    const u = (leftWallGeometry.attributes.position.getY(i) - min.y) / range.y; // Swapped X and Y for rotation
+    const u = (leftWallGeometry.attributes.position.getY(i) - min.y) / range.y;
     const v = (leftWallGeometry.attributes.position.getX(i) - min.x) / range.x;
-    uvs.setXY(i, u * 2, v * 2);
+    uvs.setXY(i, u, v); // Removed the *2 multiplier to match original zoom level
   }
 
   const leftWall = new THREE.Mesh(leftWallGeometry, logMaterial);
@@ -132,9 +132,9 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   const backRange = backMax.clone().sub(backMin);
   const backUVs = backWallGeometry.attributes.uv;
   for (let i = 0; i < backUVs.count; i++) {
-    const u = (backWallGeometry.attributes.position.getY(i) - backMin.y) / backRange.y; // Swapped X and Y for rotation
+    const u = (backWallGeometry.attributes.position.getY(i) - backMin.y) / backRange.y;
     const v = (backWallGeometry.attributes.position.getX(i) - backMin.x) / backRange.x;
-    backUVs.setXY(i, u * 2, v * 2);
+    backUVs.setXY(i, u, v); // Removed the *2 multiplier to match original zoom level
   }
 
   const backWall = new THREE.Mesh(backWallGeometry, logMaterial);
