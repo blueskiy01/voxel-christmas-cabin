@@ -11,7 +11,6 @@ export const setupDragControls = (
   const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0));
   const intersectionPoint = new THREE.Vector3();
   let isPlacingFurniture = false;
-  let isRotating = false;
 
   // Create room bounds for interaction check
   const roomBounds = new THREE.Box3(
@@ -40,14 +39,6 @@ export const setupDragControls = (
   const onMouseDown = (event: MouseEvent) => {
     event.preventDefault();
     
-    // Right click for rotation
-    if (event.button === 2) {
-      isRotating = true;
-      return;
-    }
-    
-    if (event.button !== 0) return;
-    
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
@@ -66,8 +57,18 @@ export const setupDragControls = (
       
       if (parent.userData.draggable) {
         selectedObject = parent;
-        isPlacingFurniture = true;
-        renderer.domElement.style.cursor = 'move';
+        
+        // Handle right-click rotation
+        if (event.button === 2) {
+          selectedObject.rotation.y += Math.PI / 4; // Rotate 45 degrees
+          return;
+        }
+        
+        // Handle left-click drag
+        if (event.button === 0) {
+          isPlacingFurniture = true;
+          renderer.domElement.style.cursor = 'move';
+        }
         
         const vector = new THREE.Vector3();
         vector.setFromMatrixPosition(selectedObject.matrixWorld);
@@ -90,12 +91,6 @@ export const setupDragControls = (
     
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-    if (isRotating && selectedObject) {
-      // Rotate the selected object based on mouse movement
-      selectedObject.rotation.y += event.movementX * 0.02;
-      return;
-    }
 
     if (isPlacingFurniture && selectedObject) {
       raycaster.setFromCamera(mouse, camera);
@@ -124,7 +119,6 @@ export const setupDragControls = (
   const onMouseUp = (event: MouseEvent) => {
     event.preventDefault();
     isPlacingFurniture = false;
-    isRotating = false;
     renderer.domElement.style.cursor = 'auto';
   };
 
