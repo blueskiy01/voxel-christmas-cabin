@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { X } from 'lucide-react';
 
 export const setupDragControls = (
   camera: THREE.Camera,
@@ -12,10 +13,18 @@ export const setupDragControls = (
   const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0));
   const intersectionPoint = new THREE.Vector3();
 
+  // Create delete button
+  const deleteButton = document.createElement('button');
+  deleteButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>`;
+  deleteButton.style.position = 'absolute';
+  deleteButton.style.display = 'none';
+  deleteButton.style.zIndex = '1000';
+  deleteButton.className = 'bg-white/90 p-1 rounded-full hover:bg-red-100 transition-colors';
+  document.body.appendChild(deleteButton);
+
   const onMouseDown = (event: MouseEvent) => {
     event.preventDefault();
     
-    // Only handle left click for dragging
     if (event.button !== 0) return;
     
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -23,7 +32,7 @@ export const setupDragControls = (
 
     raycaster.setFromCamera(mouse, camera);
     
-    const draggableObjects = scene.children.filter(obj => obj.userData.draggable);
+    const draggableObjects = scene.children.filter(obj => obj.userData.draggable && obj.userData.furniture);
     const intersects = raycaster.intersectObjects(draggableObjects, true);
 
     if (intersects.length > 0) {
@@ -36,7 +45,21 @@ export const setupDragControls = (
         selectedObject = parent;
         isDragging = true;
         renderer.domElement.style.cursor = 'grabbing';
+        
+        // Show delete button near the selected object
+        const vector = new THREE.Vector3();
+        vector.setFromMatrixPosition(selectedObject.matrixWorld);
+        vector.project(camera);
+        
+        const x = (vector.x * 0.5 + 0.5) * window.innerWidth;
+        const y = (-vector.y * 0.5 + 0.5) * window.innerHeight;
+        
+        deleteButton.style.display = 'block';
+        deleteButton.style.left = `${x + 30}px`;
+        deleteButton.style.top = `${y - 30}px`;
       }
+    } else {
+      deleteButton.style.display = 'none';
     }
   };
 
@@ -52,6 +75,17 @@ export const setupDragControls = (
       
       selectedObject.position.x = intersectionPoint.x;
       selectedObject.position.z = intersectionPoint.z;
+
+      // Update delete button position
+      const vector = new THREE.Vector3();
+      vector.setFromMatrixPosition(selectedObject.matrixWorld);
+      vector.project(camera);
+      
+      const x = (vector.x * 0.5 + 0.5) * window.innerWidth;
+      const y = (-vector.y * 0.5 + 0.5) * window.innerHeight;
+      
+      deleteButton.style.left = `${x + 30}px`;
+      deleteButton.style.top = `${y - 30}px`;
     }
   };
 
@@ -65,12 +99,11 @@ export const setupDragControls = (
   const onContextMenu = (event: MouseEvent) => {
     event.preventDefault();
     
-    // Get the object under the cursor
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
     raycaster.setFromCamera(mouse, camera);
-    const rotatableObjects = scene.children.filter(obj => obj.userData.rotatable);
+    const rotatableObjects = scene.children.filter(obj => obj.userData.rotatable && obj.userData.furniture);
     const intersects = raycaster.intersectObjects(rotatableObjects, true);
 
     if (intersects.length > 0) {
@@ -80,22 +113,30 @@ export const setupDragControls = (
       }
       
       if (parent.userData.rotatable) {
-        // Rotate 45 degrees on right click
         parent.rotation.y += Math.PI / 4;
       }
     }
   };
+
+  // Delete button click handler
+  deleteButton.addEventListener('click', () => {
+    if (selectedObject) {
+      scene.remove(selectedObject);
+      deleteButton.style.display = 'none';
+      selectedObject = null;
+    }
+  });
 
   renderer.domElement.addEventListener('mousedown', onMouseDown);
   renderer.domElement.addEventListener('mousemove', onMouseMove);
   renderer.domElement.addEventListener('mouseup', onMouseUp);
   renderer.domElement.addEventListener('contextmenu', onContextMenu);
 
-  // Clean up function
   return () => {
     renderer.domElement.removeEventListener('mousedown', onMouseDown);
     renderer.domElement.removeEventListener('mousemove', onMouseMove);
     renderer.domElement.removeEventListener('mouseup', onMouseUp);
     renderer.domElement.removeEventListener('contextmenu', onContextMenu);
+    document.body.removeChild(deleteButton);
   };
 };

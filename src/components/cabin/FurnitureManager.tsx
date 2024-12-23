@@ -13,31 +13,30 @@ const FURNITURE_PRESETS: Record<FurnitureType, FurniturePreset> = {
   chair: {
     create: createChairGeometry,
     position: { y: 0 },
-    aliases: ['chair', 'seat', 'stool']
+    aliases: ['chair', 'seat', 'stool', 'dining chair', 'armchair', 'office chair', 'wooden chair']
   },
   table: {
     create: createTableGeometry,
     position: { y: 0 },
-    aliases: ['table', 'desk', 'dining table']
+    aliases: ['table', 'desk', 'dining table', 'coffee table', 'side table', 'work desk', 'study table']
   },
   sofa: {
     create: createSofaGeometry,
     position: { y: 0 },
-    aliases: ['sofa', 'couch', 'loveseat']
+    aliases: ['sofa', 'couch', 'loveseat', 'settee', 'divan', 'chesterfield', 'futon']
   },
   lamp: {
     create: createLampGeometry,
     position: { y: 0 },
-    aliases: ['lamp', 'light', 'floor lamp']
+    aliases: ['lamp', 'light', 'floor lamp', 'standing lamp', 'reading lamp', 'desk lamp', 'table lamp']
   },
   tv: {
     create: createTVGeometry,
     position: { y: 0 },
-    aliases: ['tv', 'television', 'screen', 'monitor']
+    aliases: ['tv', 'television', 'screen', 'monitor', 'display', 'flat screen', 'smart tv']
   }
 };
 
-// Export available furniture names for the UI
 export const AVAILABLE_FURNITURE = Object.values(FURNITURE_PRESETS)
   .map(preset => preset.aliases?.[0])
   .filter(Boolean) as string[];
@@ -64,11 +63,11 @@ export const createFurniture = (scene: THREE.Scene, name: string) => {
   const furniture = preset.create();
   furniture.position.y = preset.position.y;
   
-  // Random position within the cabin
   furniture.position.x = (Math.random() - 0.5) * 10;
   furniture.position.z = (Math.random() - 0.5) * 10;
   
-  // Make furniture draggable and rotatable
+  // Mark as furniture and make it interactive
+  furniture.userData.furniture = true;
   furniture.userData.draggable = true;
   furniture.userData.rotatable = true;
   
