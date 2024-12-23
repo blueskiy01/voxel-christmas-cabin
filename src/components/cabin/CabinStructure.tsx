@@ -16,13 +16,6 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
     metalness: 0.1
   });
 
-  // Create window frame material
-  const windowFrameMaterial = new THREE.MeshStandardMaterial({
-    color: 0xDEB887,
-    roughness: 0.7,
-    metalness: 0.2
-  });
-
   // Create clipping planes for snow
   const leftPlane = new THREE.Plane(new THREE.Vector3(1, 0, 0), 14.9);
   const rightPlane = new THREE.Plane(new THREE.Vector3(-1, 0, 0), 14.9);
@@ -71,34 +64,6 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   leftWall.rotation.y = Math.PI / 2;
   leftWall.position.set(-15, 0, 0);
   scene.add(leftWall);
-
-  // Add window frame
-  const addWindowFrame = (x: number, z: number) => {
-    // Top frame
-    const topFrameGeometry = new THREE.BoxGeometry(0.3, 0.3, 6.2);
-    const topFrame = new THREE.Mesh(topFrameGeometry, windowFrameMaterial);
-    topFrame.position.set(x, 6, z);
-    scene.add(topFrame);
-
-    // Bottom frame
-    const bottomFrame = new THREE.Mesh(topFrameGeometry, windowFrameMaterial);
-    bottomFrame.position.set(x, 2, z);
-    scene.add(bottomFrame);
-
-    // Left frame
-    const sideFrameGeometry = new THREE.BoxGeometry(0.3, 4, 0.3);
-    const leftFrame = new THREE.Mesh(sideFrameGeometry, windowFrameMaterial);
-    leftFrame.position.set(x, 4, z - 3);
-    scene.add(leftFrame);
-
-    // Right frame
-    const rightFrame = new THREE.Mesh(sideFrameGeometry, windowFrameMaterial);
-    rightFrame.position.set(x, 4, z + 3);
-    scene.add(rightFrame);
-  };
-
-  // Add window frame
-  addWindowFrame(-14.9, -5);
 
   // Right wall
   const rightWall = new THREE.Mesh(leftWallGeometry, logMaterial);
