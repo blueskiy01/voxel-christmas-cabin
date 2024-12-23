@@ -1,3 +1,5 @@
+import * as THREE from 'three';
+
 export type FurnitureType = 'chair' | 'table' | 'sofa' | 'lamp' | 'tv';
 
 export interface FurniturePreset {
