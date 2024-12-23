@@ -105,18 +105,92 @@ export const setupDecorations = (scene: THREE.Scene) => {
     }
   });
 
-  // Add snowfall
+  // Enhanced Windows
+  const windowFrameGeometry = new THREE.BoxGeometry(3, 4, 0.3);
+  const windowFrameMaterial = new THREE.MeshStandardMaterial({
+    color: 0x4a3728,
+    roughness: 0.7,
+    metalness: 0.2
+  });
+
+  // Window glass material with blue tint and transparency
+  const windowGlassMaterial = new THREE.MeshPhysicalMaterial({
+    color: 0x4682B4,
+    transparent: true,
+    opacity: 0.3,
+    metalness: 0.9,
+    roughness: 0.1,
+    transmission: 0.5
+  });
+
+  // Left window
+  const leftWindow = new THREE.Mesh(windowFrameGeometry, windowFrameMaterial);
+  leftWindow.position.set(-14.8, 4, -5);
+  scene.add(leftWindow);
+
+  const leftGlass = new THREE.Mesh(
+    new THREE.PlaneGeometry(2.5, 3.5),
+    windowGlassMaterial
+  );
+  leftGlass.position.set(-14.6, 4, -5);
+  scene.add(leftGlass);
+
+  // Right window
+  const rightWindow = leftWindow.clone();
+  rightWindow.position.set(-14.8, 4, 5);
+  scene.add(rightWindow);
+
+  const rightGlass = leftGlass.clone();
+  rightGlass.position.set(-14.6, 4, 5);
+  scene.add(rightGlass);
+
+  // Back window
+  const backWindow = leftWindow.clone();
+  backWindow.rotation.y = Math.PI / 2;
+  backWindow.position.set(5, 4, -14.8);
+  scene.add(backWindow);
+
+  const backGlass = leftGlass.clone();
+  backGlass.rotation.y = Math.PI / 2;
+  backGlass.position.set(5, 4, -14.6);
+  scene.add(backGlass);
+
+  // Add snowfall outside the room
   const snowflakeGeometry = new THREE.SphereGeometry(0.05, 8, 8);
   const snowflakeMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFFFF });
   const snowflakes: THREE.Mesh[] = [];
 
+  // Create snowflakes only outside the room
   for (let i = 0; i < 100; i++) {
     const snowflake = new THREE.Mesh(snowflakeGeometry, snowflakeMaterial);
-    snowflake.position.set(
-      Math.random() * 40 - 20,
-      Math.random() * 10 + 5,
-      Math.random() * 40 - 20
-    );
+    
+    // Randomly position snowflakes outside the room
+    let x, y, z;
+    
+    // Randomly choose which side of the room to place the snowflake
+    const side = Math.floor(Math.random() * 3);
+    
+    switch(side) {
+      case 0: // Left side
+        x = Math.random() * 10 - 25; // -25 to -15
+        z = Math.random() * 40 - 20;
+        break;
+      case 1: // Right side
+        x = Math.random() * 10 + 15; // 15 to 25
+        z = Math.random() * 40 - 20;
+        break;
+      case 2: // Back side
+        x = Math.random() * 40 - 20;
+        z = Math.random() * 10 - 25; // -25 to -15
+        break;
+      default:
+        x = 0;
+        z = 0;
+    }
+    
+    y = Math.random() * 10 + 5;
+    
+    snowflake.position.set(x, y, z);
     snowflake.userData.velocity = Math.random() * 0.02 + 0.01;
     snowflakes.push(snowflake);
     scene.add(snowflake);
