@@ -23,9 +23,9 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
     metalness: 0.2
   });
 
-  // Create window glass material with increased transparency and brightness
+  // Create window glass material with background color and transparency
   const windowGlassMaterial = new THREE.MeshStandardMaterial({
-    color: 0xffffff,
+    color: 0x2c3e50, // Match the scene background color
     transparent: true,
     opacity: 0.1,
     metalness: 0.9,
