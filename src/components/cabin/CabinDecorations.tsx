@@ -52,13 +52,25 @@ export const setupDecorations = (scene: THREE.Scene) => {
 
   // Interactive Fireplace
   const fireplaceGeometry = new THREE.BoxGeometry(4, 4, 1);
-  const fireplaceMaterial = new THREE.MeshLambertMaterial({ 
+  const fireplaceMaterial = new THREE.MeshStandardMaterial({ 
     color: 0x8B4513,
-    flatShading: true 
+    roughness: 0.7,
+    metalness: 0.1
   });
   const fireplace = new THREE.Mesh(fireplaceGeometry, fireplaceMaterial);
   fireplace.position.set(5, 2, -14.5);
   scene.add(fireplace);
+
+  // Fireplace interior
+  const fireplaceInteriorGeometry = new THREE.BoxGeometry(3.5, 3.5, 0.5);
+  const fireplaceInteriorMaterial = new THREE.MeshStandardMaterial({ 
+    color: 0x1a1a1a,
+    roughness: 1,
+    metalness: 0
+  });
+  const fireplaceInterior = new THREE.Mesh(fireplaceInteriorGeometry, fireplaceInteriorMaterial);
+  fireplaceInterior.position.set(5, 2, -14.3);
+  scene.add(fireplaceInterior);
 
   // Fireplace mantel
   const mantelGeometry = new THREE.BoxGeometry(5, 0.3, 1.2);
