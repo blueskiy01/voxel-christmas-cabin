@@ -3,6 +3,9 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { setupCabinStructure } from './CabinStructure';
 import { setupDecorations } from './CabinDecorations';
+import { setupLighting } from './SceneLighting';
+import { setupCamera } from './SceneCamera';
+import { setupRenderer } from './SceneRenderer';
 import TextureSelector from '../TextureSelector';
 
 const CabinScene = () => {
@@ -19,72 +22,20 @@ const CabinScene = () => {
     sceneRef.current = scene;
     scene.background = new THREE.Color(0x87CEEB); // Light blue sky color
 
-    // Main ambient light
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-    scene.add(ambientLight);
-
-    // Main directional light (sun)
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
-    directionalLight.position.set(5, 10, 5);
-    directionalLight.castShadow = true;
-    // Improve shadow quality
-    directionalLight.shadow.mapSize.width = 2048;
-    directionalLight.shadow.mapSize.height = 2048;
-    scene.add(directionalLight);
-
-    // Fill light for shadows
-    const fillLight = new THREE.DirectionalLight(0xffffff, 0.5);
-    fillLight.position.set(-5, 5, -5);
-    scene.add(fillLight);
-
-    // Warm fireplace light
-    const fireplaceLight = new THREE.PointLight(0xff6b4a, 2, 10);
-    fireplaceLight.position.set(5, 2, -14);
-    scene.add(fireplaceLight);
-
-    // Window lights
-    const windowLight1 = new THREE.PointLight(0x4682B4, 1, 5);
-    windowLight1.position.set(-14, 4, -5);
-    scene.add(windowLight1);
-
-    const windowLight2 = new THREE.PointLight(0x4682B4, 1, 5);
-    windowLight2.position.set(-14, 4, 5);
-    scene.add(windowLight2);
-
-    // Camera setup
-    const aspect = window.innerWidth / window.innerHeight;
-    const frustumSize = 30;
-    const camera = new THREE.OrthographicCamera(
-      frustumSize * aspect / -2,
-      frustumSize * aspect / 2,
-      frustumSize / 2,
-      frustumSize / -2,
-      0.1,
-      1000
-    );
-    camera.position.set(20, 20, 20);
-    camera.lookAt(0, 0, 0);
-
-    // Renderer setup
-    const renderer = new THREE.WebGLRenderer({ 
-      antialias: true,
-      powerPreference: "high-performance"
-    });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    // Setup components
+    const { fireplaceLight } = setupLighting(scene);
+    const camera = setupCamera();
+    const renderer = setupRenderer();
     mountRef.current.appendChild(renderer.domElement);
 
-    // Controls
+    // Controls setup
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.maxPolarAngle = Math.PI / 2.5;
     controls.minPolarAngle = Math.PI / 4;
 
-    // Initial setup
+    // Initial cabin setup
     setupCabinStructure(scene, { wallTexturePath: wallTexture, floorTexturePath: floorTexture });
     setupDecorations(scene);
 
@@ -94,7 +45,7 @@ const CabinScene = () => {
       
       // Animate fireplace light
       const time = Date.now() * 0.001;
-      fireplaceLight.intensity = 1 + Math.sin(time * 2) * 0.2;
+      fireplaceLight.intensity = 2 + Math.sin(time * 2) * 0.3;
       
       controls.update();
       renderer.render(scene, camera);

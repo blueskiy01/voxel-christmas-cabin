@@ -6,27 +6,26 @@ interface CabinStructureProps {
 }
 
 export const setupCabinStructure = (scene: THREE.Scene, { wallTexturePath = '/dark-parquet-512x512.png', floorTexturePath = '/smooth-sand-128x128.png' }: CabinStructureProps = {}) => {
-  // Create log wall material with snow coverage effect
+  // Create log wall material with improved lighting properties
   const logMaterial = new THREE.MeshStandardMaterial({ 
-    color: 0xffffff, // Set to white to let texture color show through
-    roughness: 0.7,
+    color: 0xffffff,
+    roughness: 0.5,
     metalness: 0.1,
   });
 
-  // Create snowy floor material
+  // Create floor material with improved lighting properties
   const floorMaterial = new THREE.MeshStandardMaterial({ 
-    color: 0xffffff, // Set to white to let texture color show through
-    roughness: 0.8,
+    color: 0xffffff,
+    roughness: 0.6,
     metalness: 0.1,
   });
 
   const wallTrimMaterial = new THREE.MeshStandardMaterial({
     color: 0x8E9196,
-    roughness: 0.7,
+    roughness: 0.5,
     metalness: 0.2,
   });
 
-  // Floor
   const floor = new THREE.Mesh(
     new THREE.BoxGeometry(30, 0.2, 30),
     floorMaterial
@@ -111,7 +110,7 @@ export const setupCabinStructure = (scene: THREE.Scene, { wallTexturePath = '/da
   leftSill2.receiveShadow = true;
   scene.add(leftSill2);
 
-  // Load textures
+  // Load textures with improved settings
   const textureLoader = new THREE.TextureLoader();
   
   // Load texture for walls
@@ -119,6 +118,7 @@ export const setupCabinStructure = (scene: THREE.Scene, { wallTexturePath = '/da
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
     texture.repeat.set(4, 4);
+    texture.encoding = THREE.SRGBColorSpace;
     logMaterial.map = texture;
     logMaterial.needsUpdate = true;
   });
@@ -128,6 +128,7 @@ export const setupCabinStructure = (scene: THREE.Scene, { wallTexturePath = '/da
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
     texture.repeat.set(16, 16);
+    texture.encoding = THREE.SRGBColorSpace;
     floorMaterial.map = texture;
     floorMaterial.needsUpdate = true;
   });
