@@ -29,11 +29,6 @@ const IsometricRoom = () => {
         <div className="absolute top-10 left-10 w-20 h-30 bg-window rounded-t-lg" />
         <div className="absolute top-10 right-10 w-20 h-30 bg-window rounded-t-lg" />
         
-        {/* Decorations */}
-        <div className="absolute top-5 left-1/2 -translate-x-1/2 w-16 h-16 border-4 border-christmas-red rounded-full">
-          <div className="absolute bottom-0 w-8 h-16 bg-christmas-green" />
-        </div>
-        
         {/* Snow effect */}
         <div className="absolute inset-0 pointer-events-none">
           {[...Array(20)].map((_, i) => (
