@@ -1,69 +1,101 @@
-# Welcome to your Lovable project
+<div align="center">
+  <h1><strong>Cozy Christmas Cabin</strong></h1>
+  <p>An interactive voxel-based Christmas cabin experience! Build, decorate, and customize your cabin with festive decorations, cozy furniture, and interactive features.</p>
 
-## Project info
+  <img src="christmas_cabin.webp" alt="Preview of the cabin" width="400"> 
 
-**URL**: https://lovable.dev/projects/58f0641e-f022-46b9-9a98-8448881c8ee5
+  ![Three.js](https://img.shields.io/badge/3D_Rendering-Three.js-000000?logo=three.js&logoColor=white&style=flat-square) ![TypeScript](https://img.shields.io/badge/Language-TypeScript-3178C6?logo=typescript&logoColor=white&style=flat-square) ![Vite](https://img.shields.io/badge/Build-Vite-646CFF?logo=vite&logoColor=white&style=flat-square) ![Tailwind CSS](https://img.shields.io/badge/Styling-Tailwind%20CSS-06B6D4?logo=tailwindcss&logoColor=white&style=flat-square)  
+  ![Radix UI](https://img.shields.io/badge/Component_Library-Radix%20UI-FFD700?logo=radix-ui&logoColor=white&style=flat-square) ![React Three Fiber](https://img.shields.io/badge/3D_Rendering-React%20Three%20Fiber-000000?logo=react&logoColor=white&style=flat-square)  ![React](https://img.shields.io/badge/Frontend-React-61DAFB?logo=react&logoColor=white&style=flat-square) ![ESLint](https://img.shields.io/badge/Code_Style-ESLint-4B32C3?logo=eslint&logoColor=white&style=flat-square) 
 
-## How can I edit this code?
 
-There are several ways of editing your application.
+</div>
 
-**Use Lovable**
+### **Table of Contents**  
+1. [Features](#features)  
+2. [Getting Started](#getting-started)  
+   - [Prerequisites](#prerequisites)  
+   - [Setup](#setup)  
+3. [Contributing](#contributing)  
+4. [License](#license)  
+5. [Contact](#contact)  
+6. [Future Enhancements](#future-enhancements)  
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/58f0641e-f022-46b9-9a98-8448881c8ee5) and start prompting.
+## Features
 
-Changes made via Lovable will be committed automatically to this repo.
+- **Customizable Decor**: Drag and drop furniture to personalize your cabin.  
+- **Interactive Elements**: Light up the fireplace, watch the cat chase the bird and more (to be added next time)!  
+- **Transparent Windows**: Enjoy a snowy view through the glass windows.  
+- **Responsive Design**: Supports both desktop and mobile browsers.  
 
-**Use your preferred IDE**
+## Getting Started
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Prerequisites
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Make sure you have the following installed:  
+- [Node.js](https://nodejs.org/) (v14 or higher)  
+- `npm` or `yarn`
 
-Follow these steps:
+### Setup
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+1. **Clone the Repository**:  
+   ```bash
+   git clone https://github.com/your-username/cozy-christmas-cabin.git
+   cd cozy-christmas-cabin  
+   ```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+2. **Install Dependencies**:  
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
 
-# Step 3: Install the necessary dependencies.
-npm i
+3. **Run the Development Server**:  
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+4. **Access the App**:  
+   Open your browser and navigate to `http://localhost:5173`.
+
+## Contributing
+
+We welcome contributions to Cozy Christmas Cabin! To contribute:
+
+1. **Fork the repository**.
+2. **Create a new branch**:
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+3. **Commit your changes**:
+   ```bash
+   git commit -m "Add your message here"
+   ```
+4. **Push to your fork and submit a Pull Request**.
+
+## License
+
+This project is licensed under the MIT License. See the LICENSE file for details.
+
+## Contact
+
+For questions or support, contact us at:  
+- GitHub Issues: [Submit an issue](https://github.com/your-username/cozy-christmas-cabin/issues)
+## Citation
+If you build upon Grovly, please use the following citation:
+```BibTeX
+@misc{Grovly,
+    title = {Cozy Christmas Cabin},
+    author = {Korin Lim},
+    year = {2024},
+    howpublished = {\url{https://github.com/blueskiy01/cozy-christmas-cabin}},
+}
 ```
+## Contributor
+- [blueskiy01](www.github.com/blueskiy01)
 
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with .
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/58f0641e-f022-46b9-9a98-8448881c8ee5) and click on Share -> Publish.
-
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+## Future Enhancements
+- Additional festive themes for other holidays.  
+- A shareable guestbook feature for friends to leave messages.  
