@@ -4,6 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { setupCabinStructure } from './CabinStructure';
 import { setupDecorations } from './CabinDecorations';
 import { createFurniture, setupDragControls } from './FurnitureManager';
+import { createRoamingCat } from './RoamingCat';
 
 const CabinScene = () => {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -76,6 +77,7 @@ const CabinScene = () => {
     // Add cabin structure and decorations
     setupCabinStructure(scene);
     setupDecorations(scene);
+    createRoamingCat(scene);
 
     // Setup drag controls for furniture
     setupDragControls(camera, renderer, scene);

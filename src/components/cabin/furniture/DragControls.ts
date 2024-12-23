@@ -11,6 +11,7 @@ export const setupDragControls = (
   const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0));
   const intersectionPoint = new THREE.Vector3();
   let isPlacingFurniture = false;
+  let isRotating = false;
 
   // Create room bounds for interaction check
   const roomBounds = new THREE.Box3(
@@ -38,6 +39,12 @@ export const setupDragControls = (
 
   const onMouseDown = (event: MouseEvent) => {
     event.preventDefault();
+    
+    // Right click for rotation
+    if (event.button === 2) {
+      isRotating = true;
+      return;
+    }
     
     if (event.button !== 0) return;
     
@@ -84,6 +91,12 @@ export const setupDragControls = (
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
+    if (isRotating && selectedObject) {
+      // Rotate the selected object based on mouse movement
+      selectedObject.rotation.y += event.movementX * 0.02;
+      return;
+    }
+
     if (isPlacingFurniture && selectedObject) {
       raycaster.setFromCamera(mouse, camera);
       
@@ -111,6 +124,7 @@ export const setupDragControls = (
   const onMouseUp = (event: MouseEvent) => {
     event.preventDefault();
     isPlacingFurniture = false;
+    isRotating = false;
     renderer.domElement.style.cursor = 'auto';
   };
 
@@ -123,6 +137,9 @@ export const setupDragControls = (
     }
   });
 
+  // Prevent context menu on right-click
+  renderer.domElement.addEventListener('contextmenu', (e) => e.preventDefault());
+  
   renderer.domElement.addEventListener('mousedown', onMouseDown);
   renderer.domElement.addEventListener('mousemove', onMouseMove);
   renderer.domElement.addEventListener('mouseup', onMouseUp);
