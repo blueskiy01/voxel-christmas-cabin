@@ -1,6 +1,6 @@
 <div align="center">
-  <h1><strong>Cozy Christmas Cabin</strong></h1>
-  <p>An interactive voxel-based Christmas cabin experience! Build, decorate, and customize your cabin with festive decorations, cozy furniture, and interactive features.</p>
+  <h1><strong>Voxel Christmas Cabin</strong></h1>
+  <p>An interactive voxel-based Christmas cabin experience! Build, decorate, and customize your cozy cabin with decorations and furniture.</p>
 
   <img src="christmas_cabin.webp" alt="Preview of the cabin" width="400"> 
 
@@ -39,8 +39,8 @@ Make sure you have the following installed:
 
 1. **Clone the Repository**:  
    ```bash
-   git clone https://github.com/your-username/cozy-christmas-cabin.git
-   cd cozy-christmas-cabin  
+   git clone https://github.com/your-username/voxel-christmas-cabin.git
+   cd voxel-christmas-cabin  
    ```
 
 2. **Install Dependencies**:  
@@ -62,7 +62,7 @@ Make sure you have the following installed:
 
 ## Contributing
 
-We welcome contributions to Cozy Christmas Cabin! To contribute:
+We welcome contributions to Voxel Christmas Cabin! To contribute:
 
 1. **Fork the repository**.
 2. **Create a new branch**:
@@ -82,15 +82,15 @@ This project is licensed under the MIT License. See the LICENSE file for details
 ## Contact
 
 For questions or support, contact us at:  
-- GitHub Issues: [Submit an issue](https://github.com/your-username/cozy-christmas-cabin/issues)
+- GitHub Issues: [Submit an issue](https://github.com/your-username/voxel-christmas-cabin/issues)
 ## Citation
 If you build upon Grovly, please use the following citation:
 ```BibTeX
 @misc{Grovly,
-    title = {Cozy Christmas Cabin},
+    title = {Voxel Christmas Cabin},
     author = {Korin Lim},
     year = {2024},
-    howpublished = {\url{https://github.com/blueskiy01/cozy-christmas-cabin}},
+    howpublished = {\url{https://github.com/blueskiy01/voxel-christmas-cabin}},
 }
 ```
 ## Contributor
