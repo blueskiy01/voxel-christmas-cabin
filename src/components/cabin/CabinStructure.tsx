@@ -118,7 +118,7 @@ export const setupCabinStructure = (scene: THREE.Scene, { wallTexturePath = '/da
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
     texture.repeat.set(4, 4);
-    texture.encoding = THREE.SRGBColorSpace;
+    texture.colorSpace = THREE.SRGBColorSpace;
     logMaterial.map = texture;
     logMaterial.needsUpdate = true;
   });
@@ -128,7 +128,7 @@ export const setupCabinStructure = (scene: THREE.Scene, { wallTexturePath = '/da
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
     texture.repeat.set(16, 16);
-    texture.encoding = THREE.SRGBColorSpace;
+    texture.colorSpace = THREE.SRGBColorSpace;
     floorMaterial.map = texture;
     floorMaterial.needsUpdate = true;
   });
