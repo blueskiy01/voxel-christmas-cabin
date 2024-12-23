@@ -14,7 +14,30 @@ const CabinScene = () => {
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x2c3e50);
 
-    // Orthographic camera for 2D-like view with larger frustum
+    // Enhanced lighting setup
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    scene.add(ambientLight);
+
+    // Main directional light
+    const directionalLight = new THREE.DirectionalLight(0xffd700, 0.8);
+    directionalLight.position.set(5, 5, 5);
+    scene.add(directionalLight);
+
+    // Warm fireplace light
+    const fireplaceLight = new THREE.PointLight(0xff6b4a, 1, 10);
+    fireplaceLight.position.set(5, 2, -14);
+    scene.add(fireplaceLight);
+
+    // Window lights
+    const windowLight1 = new THREE.PointLight(0x4682B4, 0.5, 5);
+    windowLight1.position.set(-14, 4, -5);
+    scene.add(windowLight1);
+
+    const windowLight2 = new THREE.PointLight(0x4682B4, 0.5, 5);
+    windowLight2.position.set(-14, 4, 5);
+    scene.add(windowLight2);
+
+    // Orthographic camera setup
     const aspect = window.innerWidth / window.innerHeight;
     const frustumSize = 30;
     const camera = new THREE.OrthographicCamera(
@@ -38,22 +61,21 @@ const CabinScene = () => {
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
-
-    // Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-    scene.add(ambientLight);
-
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    directionalLight.position.set(5, 5, 5);
-    scene.add(directionalLight);
+    controls.maxPolarAngle = Math.PI / 2.5; // Limit rotation
+    controls.minPolarAngle = Math.PI / 4;   // Limit rotation
 
     // Add cabin structure and decorations
     setupCabinStructure(scene);
     setupDecorations(scene);
 
-    // Animation loop
+    // Animation loop with fireplace flicker effect
     const animate = () => {
       requestAnimationFrame(animate);
+      
+      // Animate fireplace light
+      const time = Date.now() * 0.001;
+      fireplaceLight.intensity = 1 + Math.sin(time * 2) * 0.2;
+      
       controls.update();
       renderer.render(scene, camera);
     };
@@ -62,7 +84,7 @@ const CabinScene = () => {
     // Handle window resize
     const handleResize = () => {
       const aspect = window.innerWidth / window.innerHeight;
-      const frustumSize = 20;
+      const frustumSize = 30;
       
       camera.left = frustumSize * aspect / -2;
       camera.right = frustumSize * aspect / 2;

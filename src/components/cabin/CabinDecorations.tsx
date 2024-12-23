@@ -1,34 +1,107 @@
 import * as THREE from 'three';
 
 export const setupDecorations = (scene: THREE.Scene) => {
-  // Christmas Tree (simplified voxel style)
-  const treeGeometry = new THREE.BoxGeometry(2, 3, 2);
-  const treeMaterial = new THREE.MeshLambertMaterial({ 
-    color: 0x228B22,
-    flatShading: true 
-  });
-  const tree = new THREE.Mesh(treeGeometry, treeMaterial);
-  tree.position.set(-3, 1.5, -3);
-  scene.add(tree);
+  // Enhanced Christmas Tree
+  const createTreeLayer = (y: number, scale: number) => {
+    const geometry = new THREE.BoxGeometry(scale, 1, scale);
+    const material = new THREE.MeshLambertMaterial({ 
+      color: 0x228B22,
+      flatShading: true 
+    });
+    const layer = new THREE.Mesh(geometry, material);
+    layer.position.set(-5, y, -5);
+    scene.add(layer);
+    
+    // Add ornaments to each layer
+    const ornamentGeometry = new THREE.SphereGeometry(0.2, 4, 4);
+    const ornamentMaterial = new THREE.MeshLambertMaterial({
+      color: Math.random() > 0.5 ? 0xFF0000 : 0xFFD700,
+      flatShading: true
+    });
+    
+    for(let i = 0; i < 4; i++) {
+      const ornament = new THREE.Mesh(ornamentGeometry, ornamentMaterial);
+      const angle = (i / 4) * Math.PI * 2;
+      ornament.position.set(
+        -5 + Math.cos(angle) * (scale/2),
+        y + 0.5,
+        -5 + Math.sin(angle) * (scale/2)
+      );
+      scene.add(ornament);
+    }
+  };
 
-  // Fireplace
-  const fireplaceGeometry = new THREE.BoxGeometry(2, 2, 1);
+  // Create tree layers
+  for(let i = 0; i < 5; i++) {
+    createTreeLayer(i + 1, 4 - (i * 0.5));
+  }
+
+  // Enhanced Fireplace
+  const fireplaceGeometry = new THREE.BoxGeometry(4, 4, 1);
   const fireplaceMaterial = new THREE.MeshLambertMaterial({ 
     color: 0x8B4513,
     flatShading: true 
   });
   const fireplace = new THREE.Mesh(fireplaceGeometry, fireplaceMaterial);
-  fireplace.position.set(3, 1, -4.5);
+  fireplace.position.set(5, 2, -14.5);
   scene.add(fireplace);
 
-  // Fire glow (simple box for now)
-  const fireGlowGeometry = new THREE.BoxGeometry(1.5, 1, 0.5);
-  const fireGlowMaterial = new THREE.MeshBasicMaterial({ 
+  // Fireplace mantel
+  const mantelGeometry = new THREE.BoxGeometry(5, 0.3, 1.2);
+  const mantel = new THREE.Mesh(mantelGeometry, fireplaceMaterial);
+  mantel.position.set(5, 4, -14.4);
+  scene.add(mantel);
+
+  // Animated fire glow
+  const fireGeometry = new THREE.BoxGeometry(3, 2, 0.5);
+  const fireMaterial = new THREE.MeshBasicMaterial({ 
     color: 0xFF4500,
     transparent: true,
-    opacity: 0.6 
+    opacity: 0.8
   });
-  const fireGlow = new THREE.Mesh(fireGlowGeometry, fireGlowMaterial);
-  fireGlow.position.set(3, 0.5, -4.2);
-  scene.add(fireGlow);
+  const fire = new THREE.Mesh(fireGeometry, fireMaterial);
+  fire.position.set(5, 1.5, -14.2);
+  scene.add(fire);
+
+  // Add stockings
+  const createStocking = (x: number) => {
+    const stockingGeometry = new THREE.BoxGeometry(0.8, 1.2, 0.3);
+    const stockingMaterial = new THREE.MeshLambertMaterial({
+      color: 0xC41E3A,
+      flatShading: true
+    });
+    const stocking = new THREE.Mesh(stockingGeometry, stockingMaterial);
+    stocking.position.set(x, 3.2, -14.2);
+    scene.add(stocking);
+  };
+
+  createStocking(3.5);
+  createStocking(5);
+  createStocking(6.5);
+
+  // Add wreaths
+  const createWreath = (x: number, z: number, rotation: number) => {
+    const wreathGeometry = new THREE.TorusGeometry(0.8, 0.2, 8, 8);
+    const wreathMaterial = new THREE.MeshLambertMaterial({
+      color: 0x228B22,
+      flatShading: true
+    });
+    const wreath = new THREE.Mesh(wreathGeometry, wreathMaterial);
+    wreath.position.set(x, 5, z);
+    wreath.rotation.y = rotation;
+    scene.add(wreath);
+
+    // Add bow
+    const bowGeometry = new THREE.BoxGeometry(0.4, 0.4, 0.1);
+    const bowMaterial = new THREE.MeshLambertMaterial({
+      color: 0xC41E3A,
+      flatShading: true
+    });
+    const bow = new THREE.Mesh(bowGeometry, bowMaterial);
+    bow.position.set(x, 4.2, z + 0.2);
+    scene.add(bow);
+  };
+
+  createWreath(-14.8, 0, Math.PI / 2);
+  createWreath(0, -14.8, 0);
 };
