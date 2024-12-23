@@ -21,10 +21,6 @@ export const createRoamingCat = (scene: THREE.Scene) => {
   const speed = 0.05;
   const chaseDist = 0.1;
   
-  // Define Christmas tree position and radius
-  const treePosition = new THREE.Vector3(-5, 0, -5);
-  const treeRadius = 2; // Collision radius for the tree
-  
   // Store the cat in scene's userData for animation
   scene.userData.cat = {
     model: bodyGeometry,
@@ -45,21 +41,9 @@ export const createRoamingCat = (scene: THREE.Scene) => {
       if (direction.length() > chaseDist) {
         direction.normalize();
         
-        // Calculate next position
-        const nextPos = catPos.clone();
-        nextPos.x += direction.x * speed * 0.1;
-        nextPos.z += direction.z * speed * 0.1;
-        
-        // Check distance to tree
-        const distanceToTree = new THREE.Vector2(
-          nextPos.x - treePosition.x,
-          nextPos.z - treePosition.z
-        ).length();
-        
-        // Only move if not colliding with tree
-        if (distanceToTree > treeRadius) {
-          catPos.copy(nextPos);
-        }
+        // Move towards bird
+        catPos.x += direction.x * speed * 0.1;
+        catPos.z += direction.z * speed * 0.1;
         
         // Face direction of movement
         bodyGeometry.rotation.y = Math.atan2(direction.x, direction.z);

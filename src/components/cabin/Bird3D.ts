@@ -50,53 +50,25 @@ export const createAnimatedBird = (scene: THREE.Scene) => {
   let angle = 0;
   const speed = 0.001;
   const radius = 6;
-  
-  // Define Christmas tree position and radius
-  const treePosition = new THREE.Vector3(-5, 0, -5);
-  const treeRadius = 2; // Collision radius for the tree
-  const treeHeight = 8; // Approximate height of the tree
 
   // Store the bird in scene's userData for animation
   scene.userData.bird = {
     model: birdGroup,
     getPosition: () => birdGroup.position.clone(),
     animate: () => {
-      // Calculate next position
-      const nextX = Math.cos(angle) * radius;
-      const nextZ = Math.sin(angle) * radius;
-      
-      // Check distance to tree (only if bird is below tree height)
-      if (birdGroup.position.y < treeHeight) {
-        const distanceToTree = new THREE.Vector2(
-          nextX - treePosition.x,
-          nextZ - treePosition.z
-        ).length();
-        
-        // If would collide with tree, adjust radius outward
-        if (distanceToTree < treeRadius) {
-          const adjustedRadius = radius + (treeRadius - distanceToTree);
-          birdGroup.position.x = Math.cos(angle) * adjustedRadius;
-          birdGroup.position.z = Math.sin(angle) * adjustedRadius;
-        } else {
-          birdGroup.position.x = nextX;
-          birdGroup.position.z = nextZ;
-        }
-      } else {
-        // Above tree height, move normally
-        birdGroup.position.x = nextX;
-        birdGroup.position.z = nextZ;
-      }
-      
+      // Move in a circle
       angle += speed;
+      birdGroup.position.x = Math.cos(angle) * radius;
+      birdGroup.position.z = Math.sin(angle) * radius;
       birdGroup.position.y = 3 + Math.sin(Date.now() * 0.001) * 0.1;
       
       // Face direction of movement
       birdGroup.rotation.y = -angle;
 
-      // Animate wings
+      // Animate wings with increased flapping speed and amplitude
       const wings = [leftWing, rightWing];
       wings.forEach(wing => {
-        wing.rotation.z = Math.sin(Date.now() * 0.02) * 0.4;
+        wing.rotation.z = Math.sin(Date.now() * 0.02) * 0.4; // Doubled speed and amplitude
       });
     }
   };
