@@ -16,18 +16,18 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
     metalness: 0.1
   });
 
-  // Create window frame material
+  // Create window frame material with a lighter wood color
   const windowFrameMaterial = new THREE.MeshStandardMaterial({
-    color: 0x4a3728,
+    color: 0xDEB887, // Changed to a lighter wood color
     roughness: 0.7,
     metalness: 0.2
   });
 
-  // Create window glass material with background color and transparency
+  // Create window glass material with more visible blue tint and transparency
   const windowGlassMaterial = new THREE.MeshStandardMaterial({
-    color: 0x0EA5E9,
+    color: 0x87CEEB, // Changed to a lighter sky blue
     transparent: true,
-    opacity: 0.1,
+    opacity: 0.3,
     metalness: 0.9,
     roughness: 0.1
   });
@@ -83,16 +83,16 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
 
   // Add single window frame and glass for left wall
   const addWindow = (x: number, z: number) => {
-    // Frame
-    const frameGeometry = new THREE.BoxGeometry(0.2, 4.2, 6.2);
+    // Frame - made slightly thicker
+    const frameGeometry = new THREE.BoxGeometry(0.3, 4.2, 6.2);
     const frame = new THREE.Mesh(frameGeometry, windowFrameMaterial);
     frame.position.set(x, 4, z);
     scene.add(frame);
 
-    // Glass
+    // Glass - moved slightly outward
     const glassGeometry = new THREE.PlaneGeometry(6, 4);
     const glass = new THREE.Mesh(glassGeometry, windowGlassMaterial);
-    glass.position.set(x + (x < 0 ? 0.2 : -0.2), 4, z);
+    glass.position.set(x + (x < 0 ? 0.3 : -0.3), 4, z);
     glass.rotation.y = x < 0 ? Math.PI / 2 : -Math.PI / 2;
     
     const glassGroup = new THREE.Group();
