@@ -1,83 +1,33 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { setupCabinStructure } from './CabinStructure';
-import { setupDecorations } from './CabinDecorations';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import InteractivePrompt from './InteractiveFurniture';
-import { createFurniture, setupDragControls } from './FurnitureManager';
+import { addFurniture } from './FurnitureManager';
 
 const CabinScene = () => {
   const mountRef = useRef<HTMLDivElement>(null);
-  const sceneRef = useRef<THREE.Scene | null>(null);
-  const cameraRef = useRef<THREE.OrthographicCamera | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+  const sceneRef = useRef<THREE.Scene | null>(null);
+
+  const handleFurnitureAdd = (furnitureName: string) => {
+    if (sceneRef.current) {
+      addFurniture(sceneRef.current, furnitureName);
+    }
+  };
 
   useEffect(() => {
-    if (!mountRef.current) return;
-
-    // Scene setup
     const scene = new THREE.Scene();
-    sceneRef.current = scene;
-    scene.background = new THREE.Color(0x2c3e50);
-
-    // Enhanced lighting setup
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-    scene.add(ambientLight);
-
-    const directionalLight = new THREE.DirectionalLight(0xffd700, 0.8);
-    directionalLight.position.set(5, 5, 5);
-    scene.add(directionalLight);
-
-    const fireplaceLight = new THREE.PointLight(0xff6b4a, 1, 10);
-    fireplaceLight.position.set(5, 2, -14);
-    scene.add(fireplaceLight);
-
-    const windowLight1 = new THREE.PointLight(0x4682B4, 0.5, 5);
-    windowLight1.position.set(-14, 4, -5);
-    scene.add(windowLight1);
-
-    const windowLight2 = new THREE.PointLight(0x4682B4, 0.5, 5);
-    windowLight2.position.set(-14, 4, 5);
-    scene.add(windowLight2);
-
-    // Camera setup with adjusted frustum size
-    const aspect = window.innerWidth / window.innerHeight;
-    const frustumSize = 20; // Reduced from 30 to zoom in a bit
-    const camera = new THREE.OrthographicCamera(
-      frustumSize * aspect / -2,
-      frustumSize * aspect / 2,
-      frustumSize / 2,
-      frustumSize / -2,
-      0.1,
-      1000
-    );
-    cameraRef.current = camera;
-    camera.position.set(20, 20, 20);
-    camera.lookAt(0, 0, 0);
-
-    // Renderer setup with proper sizing
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    rendererRef.current = renderer;
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    mountRef.current.innerHTML = ''; // Clear any existing content
-    mountRef.current.appendChild(renderer.domElement);
+    mountRef.current?.appendChild(renderer.domElement);
+    rendererRef.current = renderer;
+    sceneRef.current = scene;
 
-    // Controls
     const controls = new OrbitControls(camera, renderer.domElement);
+    camera.position.set(0, 1, 5);
     controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.maxPolarAngle = Math.PI / 2.5;
-    controls.minPolarAngle = Math.PI / 4;
 
-    // Add cabin structure and decorations
-    setupCabinStructure(scene);
-    setupDecorations(scene);
-
-    // Setup drag controls for furniture
-    setupDragControls(camera, renderer, scene);
-
-    // Animation loop
     const animate = () => {
       requestAnimationFrame(animate);
       controls.update();
@@ -85,37 +35,19 @@ const CabinScene = () => {
     };
     animate();
 
-    // Handle window resize
-    const handleResize = () => {
-      const aspect = window.innerWidth / window.innerHeight;
-      const frustumSize = 20;
-      
-      camera.left = frustumSize * aspect / -2;
-      camera.right = frustumSize * aspect / 2;
-      camera.top = frustumSize / 2;
-      camera.bottom = frustumSize / -2;
-      
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    };
-    window.addEventListener('resize', handleResize);
-
     return () => {
-      window.removeEventListener('resize', handleResize);
       mountRef.current?.removeChild(renderer.domElement);
-      scene.clear();
+      renderer.dispose();
     };
   }, []);
 
-  const handleFurnitureAdd = (furnitureName: string) => {
-    if (sceneRef.current) {
-      createFurniture(sceneRef.current, furnitureName);
-    }
-  };
-
   return (
-    <div ref={mountRef} className="fixed inset-0 w-full h-full">
-      <InteractivePrompt onFurnitureAdd={handleFurnitureAdd} />
+    <div className="relative w-full h-full">
+      <div ref={mountRef} className="fixed inset-0 w-full h-full">
+      </div>
+      <div className="relative z-10">
+        <InteractivePrompt onFurnitureAdd={handleFurnitureAdd} />
+      </div>
     </div>
   );
 };
