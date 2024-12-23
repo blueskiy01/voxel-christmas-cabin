@@ -3,7 +3,9 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { setupCabinStructure } from './CabinStructure';
 import { setupDecorations } from './CabinDecorations';
-import { createFurniture, setupDragControls } from './FurnitureManager';
+import { setupDragControls } from './FurnitureManager';
+import { createRoamingCat } from './RoamingCat';
+
 const CabinScene = () => {
   const mountRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
@@ -75,6 +77,7 @@ const CabinScene = () => {
     // Add cabin structure and decorations
     setupCabinStructure(scene);
     setupDecorations(scene);
+    createRoamingCat(scene);
 
     // Setup drag controls for furniture
     setupDragControls(camera, renderer, scene);
@@ -82,11 +85,13 @@ const CabinScene = () => {
     const animate = () => {
       requestAnimationFrame(animate);
       controls.update();
+      if (scene.userData.animate) {
+        scene.userData.animate();
+      }
       renderer.render(scene, camera);
     };
     animate();
 
-    // Handle window resize
     const handleResize = () => {
       const aspect = window.innerWidth / window.innerHeight;
       const frustumSize = 20;
