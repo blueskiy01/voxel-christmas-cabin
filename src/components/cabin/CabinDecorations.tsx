@@ -105,9 +105,13 @@ export const setupDecorations = (scene: THREE.Scene) => {
     }
   });
 
-  // Add snowfall
+  // Add snowfall with clipping planes
   const snowflakeGeometry = new THREE.SphereGeometry(0.05, 8, 8);
-  const snowflakeMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFFFF });
+  const snowflakeMaterial = new THREE.MeshBasicMaterial({ 
+    color: 0xFFFFFF,
+    clippingPlanes: scene.userData.snowClippingPlanes,
+    clipIntersection: true
+  });
   const snowflakes: THREE.Mesh[] = [];
 
   for (let i = 0; i < 100; i++) {

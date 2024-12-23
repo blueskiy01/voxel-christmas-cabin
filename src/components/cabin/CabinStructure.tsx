@@ -32,6 +32,15 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
     roughness: 0.1
   });
 
+  // Create clipping planes for snow
+  const leftPlane = new THREE.Plane(new THREE.Vector3(1, 0, 0), 14.9);
+  const rightPlane = new THREE.Plane(new THREE.Vector3(-1, 0, 0), 14.9);
+  const backPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 14.9);
+  const topPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), -8);
+
+  // Add clipping planes to the scene for snow
+  scene.userData.snowClippingPlanes = [leftPlane, rightPlane, backPlane, topPlane];
+
   // Floor
   const floor = new THREE.Mesh(
     new THREE.BoxGeometry(30, 0.2, 30),
@@ -179,7 +188,7 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   textureLoader.load('/smooth-sand-128x128.png', (texture) => {
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set(16, 16); // Reverted back to original tiling
+    texture.repeat.set(16, 16); // Original tiling
     floorMaterial.map = texture;
     floorMaterial.needsUpdate = true;
   });
