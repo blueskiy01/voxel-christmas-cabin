@@ -1,187 +1,61 @@
 import * as THREE from 'three';
+import { 
+  createChairGeometry,
+  createTableGeometry,
+  createSofaGeometry,
+  createLampGeometry,
+  createTVGeometry
+} from './furniture/FurnitureGeometries';
+import { setupDragControls } from './furniture/DragControls';
+import type { FurnitureType, FurniturePreset } from './furniture/FurnitureTypes';
 
-const createChairGeometry = () => {
-  const group = new THREE.Group();
-
-  // Seat
-  const seat = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 0.1, 1),
-    new THREE.MeshStandardMaterial({ color: 0x8B4513 })
-  );
-  seat.position.y = 0.5;
-  group.add(seat);
-
-  // Backrest
-  const backrest = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 1.2, 0.1),
-    new THREE.MeshStandardMaterial({ color: 0x8B4513 })
-  );
-  backrest.position.set(0, 1.1, -0.45);
-  group.add(backrest);
-
-  // Legs
-  const legGeometry = new THREE.CylinderGeometry(0.05, 0.05, 0.5, 6);
-  const legMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
-  
-  const positions = [
-    [-0.4, 0.25, 0.4],
-    [0.4, 0.25, 0.4],
-    [-0.4, 0.25, -0.4],
-    [0.4, 0.25, -0.4]
-  ];
-
-  positions.forEach(([x, y, z]) => {
-    const leg = new THREE.Mesh(legGeometry, legMaterial);
-    leg.position.set(x, y, z);
-    group.add(leg);
-  });
-
-  return group;
-};
-
-const createTableGeometry = () => {
-  const group = new THREE.Group();
-
-  // Table top
-  const top = new THREE.Mesh(
-    new THREE.BoxGeometry(2, 0.1, 1.5),
-    new THREE.MeshStandardMaterial({ color: 0x8B4513 })
-  );
-  top.position.y = 0.75;
-  group.add(top);
-
-  // Legs
-  const legGeometry = new THREE.CylinderGeometry(0.05, 0.08, 0.75, 6);
-  const legMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
-
-  const positions = [
-    [-0.9, 0.375, 0.65],
-    [0.9, 0.375, 0.65],
-    [-0.9, 0.375, -0.65],
-    [0.9, 0.375, -0.65]
-  ];
-
-  positions.forEach(([x, y, z]) => {
-    const leg = new THREE.Mesh(legGeometry, legMaterial);
-    leg.position.set(x, y, z);
-    group.add(leg);
-  });
-
-  return group;
-};
-
-const createSofaGeometry = () => {
-  const group = new THREE.Group();
-
-  // Base
-  const base = new THREE.Mesh(
-    new THREE.BoxGeometry(3, 0.5, 1.5),
-    new THREE.MeshStandardMaterial({ color: 0x556B2F })
-  );
-  base.position.y = 0.25;
-  group.add(base);
-
-  // Backrest
-  const backrest = new THREE.Mesh(
-    new THREE.BoxGeometry(3, 1, 0.3),
-    new THREE.MeshStandardMaterial({ color: 0x556B2F })
-  );
-  backrest.position.set(0, 0.75, -0.6);
-  group.add(backrest);
-
-  // Armrests
-  const armrestGeometry = new THREE.BoxGeometry(0.3, 0.6, 1.5);
-  const armrestMaterial = new THREE.MeshStandardMaterial({ color: 0x556B2F });
-
-  const leftArmrest = new THREE.Mesh(armrestGeometry, armrestMaterial);
-  leftArmrest.position.set(-1.35, 0.55, 0);
-  group.add(leftArmrest);
-
-  const rightArmrest = new THREE.Mesh(armrestGeometry, armrestMaterial);
-  rightArmrest.position.set(1.35, 0.55, 0);
-  group.add(rightArmrest);
-
-  // Cushions
-  const cushionGeometry = new THREE.BoxGeometry(0.9, 0.15, 0.9);
-  const cushionMaterial = new THREE.MeshStandardMaterial({ color: 0x668B2F });
-
-  const positions = [-0.95, 0, 0.95];
-  positions.forEach(x => {
-    const cushion = new THREE.Mesh(cushionGeometry, cushionMaterial);
-    cushion.position.set(x, 0.55, 0);
-    group.add(cushion);
-  });
-
-  return group;
-};
-
-const createLampGeometry = () => {
-  const group = new THREE.Group();
-
-  // Base
-  const base = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.3, 0.4, 0.1, 8),
-    new THREE.MeshStandardMaterial({ color: 0xDEB887 })
-  );
-  group.add(base);
-
-  // Pole
-  const pole = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.05, 0.05, 1.5, 8),
-    new THREE.MeshStandardMaterial({ color: 0xDEB887 })
-  );
-  pole.position.y = 0.75;
-  group.add(pole);
-
-  // Lampshade
-  const shade = new THREE.Mesh(
-    new THREE.ConeGeometry(0.4, 0.6, 8, 1, true),
-    new THREE.MeshStandardMaterial({ 
-      color: 0xFFFAF0,
-      transparent: true,
-      opacity: 0.8,
-      side: THREE.DoubleSide
-    })
-  );
-  shade.position.y = 1.5;
-  shade.rotation.x = Math.PI;
-  group.add(shade);
-
-  // Light
-  const light = new THREE.PointLight(0xFFFFCC, 0.5, 5);
-  light.position.y = 1.3;
-  group.add(light);
-
-  return group;
-};
-
-const FURNITURE_PRESETS = {
+const FURNITURE_PRESETS: Record<FurnitureType, FurniturePreset> = {
   chair: {
     create: createChairGeometry,
-    position: { y: 0 }
+    position: { y: 0 },
+    aliases: ['chair', 'seat', 'stool']
   },
   table: {
     create: createTableGeometry,
-    position: { y: 0 }
+    position: { y: 0 },
+    aliases: ['table', 'desk', 'dining table']
   },
   sofa: {
     create: createSofaGeometry,
-    position: { y: 0 }
+    position: { y: 0 },
+    aliases: ['sofa', 'couch', 'loveseat']
   },
   lamp: {
     create: createLampGeometry,
-    position: { y: 0 }
+    position: { y: 0 },
+    aliases: ['lamp', 'light', 'floor lamp']
+  },
+  tv: {
+    create: createTVGeometry,
+    position: { y: 0 },
+    aliases: ['tv', 'television', 'screen', 'monitor']
   }
 };
 
-export const createFurniture = (scene: THREE.Scene, name: string) => {
-  const preset = FURNITURE_PRESETS[name.toLowerCase() as keyof typeof FURNITURE_PRESETS];
+const findFurnitureType = (searchTerm: string): FurnitureType | undefined => {
+  const normalizedSearch = searchTerm.toLowerCase().trim();
   
-  if (!preset) {
-    console.warn(`Unknown furniture type: ${name}. Creating a chair instead.`);
-    return createFurniture(scene, 'chair');
+  return Object.entries(FURNITURE_PRESETS).find(([_, preset]) => 
+    preset.aliases?.some(alias => 
+      normalizedSearch.includes(alias.toLowerCase())
+    )
+  )?.[0] as FurnitureType | undefined;
+};
+
+export const createFurniture = (scene: THREE.Scene, name: string) => {
+  const furnitureType = findFurnitureType(name);
+  
+  if (!furnitureType) {
+    console.warn(`Unknown furniture type: ${name}. Available types: ${Object.keys(FURNITURE_PRESETS).join(', ')}`);
+    return null;
   }
 
+  const preset = FURNITURE_PRESETS[furnitureType];
   const furniture = preset.create();
   furniture.position.y = preset.position.y;
   
@@ -196,48 +70,4 @@ export const createFurniture = (scene: THREE.Scene, name: string) => {
   return furniture;
 };
 
-export const setupDragControls = (
-  camera: THREE.Camera,
-  renderer: THREE.WebGLRenderer,
-  scene: THREE.Scene
-) => {
-  const raycaster = new THREE.Raycaster();
-  const mouse = new THREE.Vector2();
-  let selectedObject: THREE.Object3D | null = null;
-  let isDragging = false;
-  const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0));
-  const intersectionPoint = new THREE.Vector3();
-
-  renderer.domElement.addEventListener('mousedown', (event) => {
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-    raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects(scene.children);
-
-    if (intersects.length > 0 && intersects[0].object.userData.draggable) {
-      selectedObject = intersects[0].object;
-      isDragging = true;
-      renderer.domElement.style.cursor = 'grabbing';
-    }
-  });
-
-  renderer.domElement.addEventListener('mousemove', (event) => {
-    if (isDragging && selectedObject) {
-      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-      raycaster.setFromCamera(mouse, camera);
-      raycaster.ray.intersectPlane(plane, intersectionPoint);
-      
-      selectedObject.position.x = intersectionPoint.x;
-      selectedObject.position.z = intersectionPoint.z;
-    }
-  });
-
-  renderer.domElement.addEventListener('mouseup', () => {
-    isDragging = false;
-    selectedObject = null;
-    renderer.domElement.style.cursor = 'auto';
-  });
-};
+export { setupDragControls };
