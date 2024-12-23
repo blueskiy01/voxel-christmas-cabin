@@ -49,7 +49,7 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   floor.position.y = -0.1;
   scene.add(floor);
 
-  // Left wall with window cutouts
+  // Left wall with window cutout
   const leftWallShape = new THREE.Shape();
   leftWallShape.moveTo(-15, 0);
   leftWallShape.lineTo(15, 0);
@@ -57,20 +57,13 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   leftWallShape.lineTo(-15, 8);
   leftWallShape.lineTo(-15, 0);
 
-  // Create holes for windows
+  // Create hole for single window
   const leftHole1 = new THREE.Path();
   leftHole1.moveTo(-8, 2);
   leftHole1.lineTo(-2, 2);
   leftHole1.lineTo(-2, 6);
   leftHole1.lineTo(-8, 6);
   leftWallShape.holes.push(leftHole1);
-
-  const leftHole2 = new THREE.Path();
-  leftHole2.moveTo(2, 2);
-  leftHole2.lineTo(8, 2);
-  leftHole2.lineTo(8, 6);
-  leftHole2.lineTo(2, 6);
-  leftWallShape.holes.push(leftHole2);
 
   const leftWallGeometry = new THREE.ShapeGeometry(leftWallShape);
   leftWallGeometry.computeBoundingBox();
@@ -80,7 +73,7 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   for (let i = 0; i < uvs.count; i++) {
     const u = (leftWallGeometry.attributes.position.getY(i) - min.y) / range.y;
     const v = (leftWallGeometry.attributes.position.getX(i) - min.x) / range.x;
-    uvs.setXY(i, u, v); // Removed the *2 multiplier to match original zoom level
+    uvs.setXY(i, u, v);
   }
 
   const leftWall = new THREE.Mesh(leftWallGeometry, logMaterial);
@@ -88,7 +81,7 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   leftWall.position.set(-15, 0, 0);
   scene.add(leftWall);
 
-  // Add window frames and glass for left wall
+  // Add single window frame and glass for left wall
   const addWindow = (x: number, z: number) => {
     // Frame
     const frameGeometry = new THREE.BoxGeometry(0.2, 4.2, 6.2);
@@ -96,22 +89,20 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
     frame.position.set(x, 4, z);
     scene.add(frame);
 
-    // Glass - Create a clipping plane to prevent snow from appearing inside
+    // Glass
     const glassGeometry = new THREE.PlaneGeometry(6, 4);
     const glass = new THREE.Mesh(glassGeometry, windowGlassMaterial);
     glass.position.set(x + (x < 0 ? 0.2 : -0.2), 4, z);
     glass.rotation.y = x < 0 ? Math.PI / 2 : -Math.PI / 2;
     
-    // Add the glass to a separate group for snow clipping
     const glassGroup = new THREE.Group();
     glassGroup.add(glass);
-    glassGroup.userData.isWindow = true; // Mark as window for snow effect
+    glassGroup.userData.isWindow = true;
     scene.add(glassGroup);
   };
 
-  // Add windows for left wall
+  // Add single window for left wall
   addWindow(-14.9, -5);
-  addWindow(-14.9, 5);
 
   // Right wall with window cutouts
   const rightWall = leftWall.clone();
