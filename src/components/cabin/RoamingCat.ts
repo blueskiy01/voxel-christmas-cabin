@@ -52,28 +52,46 @@ export const createRoamingCat = (scene: THREE.Scene) => {
   scene.add(bodyGeometry);
 
   // Animation parameters
-  const radius = 8; // Radius of circular path
-  const speed = 0.0003; // Reduced speed for slower movement
-  let angle = 0;
-
+  const speed = 0.05; // Speed of cat movement
+  const chaseDist = 0.1; // How close the cat gets to the pigeon
+  
   // Store the cat in scene's userData for animation
   scene.userData.cat = {
     model: bodyGeometry,
     animate: () => {
-      angle += speed;
+      if (!scene.userData.pigeon) return;
       
-      // Update position in a circle
-      bodyGeometry.position.x = Math.cos(angle) * radius;
-      bodyGeometry.position.z = Math.sin(angle) * radius;
+      // Get pigeon position
+      const pigeonPos = scene.userData.pigeon.getPosition();
+      const catPos = bodyGeometry.position;
       
-      // Make cat face the direction it's moving
-      bodyGeometry.rotation.y = angle + Math.PI / 2;
+      // Calculate direction to pigeon
+      const direction = new THREE.Vector3(
+        pigeonPos.x - catPos.x,
+        0, // Keep y movement separate
+        pigeonPos.z - catPos.z
+      );
       
-      // Add subtle up and down movement
-      bodyGeometry.position.y = Math.sin(angle * 4) * 0.1 + 0.3;
+      // Only move if not too close to pigeon
+      if (direction.length() > chaseDist) {
+        direction.normalize();
+        
+        // Move towards pigeon
+        catPos.x += direction.x * speed * 0.1;
+        catPos.z += direction.z * speed * 0.1;
+        
+        // Face direction of movement
+        bodyGeometry.rotation.y = Math.atan2(direction.x, direction.z);
+      }
+      
+      // Add bobbing motion
+      catPos.y = 0.3 + Math.sin(Date.now() * 0.004) * 0.1;
       
       // Animate tail
-      tail.rotation.z = Math.sin(angle * 8) * 0.2;
+      const tail = bodyGeometry.children.find(child => child.geometry instanceof THREE.TubeGeometry);
+      if (tail) {
+        tail.rotation.z = Math.sin(Date.now() * 0.008) * 0.2;
+      }
     }
   };
 

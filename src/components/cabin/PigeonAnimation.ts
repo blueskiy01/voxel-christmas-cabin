@@ -26,19 +26,37 @@ export const createAnimatedPigeon = (scene: THREE.Scene) => {
   
   // Animation parameters
   let frame = 0;
+  let frameCounter = 0;
+  const frameUpdateRate = 15; // Lower number = faster animation
   const totalFrames = 4; // Number of frames in the sprite sheet
   const frameWidth = 1 / totalFrames;
+  
+  // Movement parameters
+  let angle = 0;
+  const speed = 0.001;
+  const radius = 6;
   
   // Store the pigeon in scene's userData for animation
   scene.userData.pigeon = {
     sprite: pigeon,
+    getPosition: () => pigeon.position.clone(), // Add this to allow cat to know pigeon position
     animate: () => {
-      // Update texture offset to create animation
-      frame = (frame + 1) % totalFrames;
+      // Update sprite frame more slowly
+      frameCounter++;
+      if (frameCounter >= frameUpdateRate) {
+        frame = (frame + 1) % totalFrames;
+        frameCounter = 0;
+      }
       spriteMaterial.map.offset.x = frame * frameWidth;
       
-      // Add some floating movement
+      // Move in a circle
+      angle += speed;
+      pigeon.position.x = Math.cos(angle) * radius;
+      pigeon.position.z = Math.sin(angle) * radius;
       pigeon.position.y = 3 + Math.sin(Date.now() * 0.001) * 0.1;
+      
+      // Face direction of movement
+      pigeon.rotation.y = -angle;
     }
   };
   
