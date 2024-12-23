@@ -1,23 +1,24 @@
 import * as THREE from 'three';
 
 export const setupCabinStructure = (scene: THREE.Scene) => {
-  // Create detailed materials with pixel art textures
-  const woodMaterial = new THREE.MeshLambertMaterial({ 
-    color: 0x8B4513,
+  // Create brick wall material with a warmer, cozy color
+  const brickMaterial = new THREE.MeshLambertMaterial({ 
+    color: 0xA0522D, // Warm brick color
     flatShading: true,
-    // Add wood grain effect through color variations
+    // Add subtle variations for brick texture effect
     vertexColors: true 
   });
 
+  // Create wooden floor material with a rich, warm tone
   const floorMaterial = new THREE.MeshLambertMaterial({ 
-    color: 0xD2B48C,
+    color: 0xDEB887, // Warm wooden color
     flatShading: true,
-    // Add subtle pattern to floor
+    // Add wood grain effect through subtle variations
     vertexColors: true
   });
 
   const wallTrimMaterial = new THREE.MeshLambertMaterial({
-    color: 0x654321,
+    color: 0x8B4513, // Darker wood trim
     flatShading: true
   });
 
@@ -39,18 +40,18 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   rightBaseboard.position.set(0, 0.1, 15);
   scene.add(rightBaseboard);
 
-  // Walls - thinner with trim
+  // Walls - thinner with brick material
   const wallGeometry = new THREE.BoxGeometry(0.2, 8, 30);
-  const leftWall = new THREE.Mesh(wallGeometry, woodMaterial);
+  const leftWall = new THREE.Mesh(wallGeometry, brickMaterial);
   leftWall.position.set(-15, 4, 0);
   scene.add(leftWall);
 
-  const rightWall = new THREE.Mesh(wallGeometry, woodMaterial);
+  const rightWall = new THREE.Mesh(wallGeometry, brickMaterial);
   rightWall.position.set(15, 4, 0);
   scene.add(rightWall);
 
   const backWallGeometry = new THREE.BoxGeometry(30, 8, 0.2);
-  const backWall = new THREE.Mesh(backWallGeometry, woodMaterial);
+  const backWall = new THREE.Mesh(backWallGeometry, brickMaterial);
   backWall.position.set(0, 4, -15);
   scene.add(backWall);
 
