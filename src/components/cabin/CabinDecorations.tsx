@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 export const setupDecorations = (scene: THREE.Scene) => {
-  // Enhanced Christmas Tree
+  // Enhanced Christmas Tree with star
   const createTreeLayer = (y: number, scale: number) => {
     const geometry = new THREE.BoxGeometry(scale, 1, scale);
     const material = new THREE.MeshLambertMaterial({ 
@@ -13,7 +13,7 @@ export const setupDecorations = (scene: THREE.Scene) => {
     scene.add(layer);
     
     // Add ornaments to each layer
-    const ornamentGeometry = new THREE.SphereGeometry(0.2, 4, 4);
+    const ornamentGeometry = new THREE.SphereGeometry(0.2, 8, 8);
     const ornamentMaterial = new THREE.MeshLambertMaterial({
       color: Math.random() > 0.5 ? 0xFF0000 : 0xFFD700,
       flatShading: true
@@ -35,6 +35,19 @@ export const setupDecorations = (scene: THREE.Scene) => {
   for(let i = 0; i < 5; i++) {
     createTreeLayer(i + 1, 4 - (i * 0.5));
   }
+
+  // Add star on top
+  const starGeometry = new THREE.OctahedronGeometry(0.5, 0);
+  const starMaterial = new THREE.MeshLambertMaterial({
+    color: 0xFFD700,
+    emissive: 0xFFD700,
+    emissiveIntensity: 0.5,
+    flatShading: true
+  });
+  const star = new THREE.Mesh(starGeometry, starMaterial);
+  star.position.set(-5, 6.5, -5);
+  star.rotation.y = Math.PI / 4;
+  scene.add(star);
 
   // Enhanced Fireplace
   const fireplaceGeometry = new THREE.BoxGeometry(4, 4, 1);
@@ -78,30 +91,4 @@ export const setupDecorations = (scene: THREE.Scene) => {
   createStocking(3.5);
   createStocking(5);
   createStocking(6.5);
-
-  // Add wreaths
-  const createWreath = (x: number, z: number, rotation: number) => {
-    const wreathGeometry = new THREE.TorusGeometry(0.8, 0.2, 8, 8);
-    const wreathMaterial = new THREE.MeshLambertMaterial({
-      color: 0x228B22,
-      flatShading: true
-    });
-    const wreath = new THREE.Mesh(wreathGeometry, wreathMaterial);
-    wreath.position.set(x, 5, z);
-    wreath.rotation.y = rotation;
-    scene.add(wreath);
-
-    // Add bow
-    const bowGeometry = new THREE.BoxGeometry(0.4, 0.4, 0.1);
-    const bowMaterial = new THREE.MeshLambertMaterial({
-      color: 0xC41E3A,
-      flatShading: true
-    });
-    const bow = new THREE.Mesh(bowGeometry, bowMaterial);
-    bow.position.set(x, 4.2, z + 0.2);
-    scene.add(bow);
-  };
-
-  createWreath(-14.8, 0, Math.PI / 2);
-  createWreath(0, -14.8, 0);
 };

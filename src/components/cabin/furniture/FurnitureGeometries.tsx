@@ -2,32 +2,28 @@ import * as THREE from 'three';
 
 export const createChairGeometry = () => {
   const group = new THREE.Group();
-
-  // Seat
   const seat = new THREE.Mesh(
-    new THREE.BoxGeometry(0.8, 0.1, 0.8),
+    new THREE.BoxGeometry(1.6, 0.2, 1.6),
     new THREE.MeshStandardMaterial({ color: 0x8B4513 })
   );
-  seat.position.y = 0.5;
+  seat.position.y = 1;
   group.add(seat);
 
-  // Backrest
   const backrest = new THREE.Mesh(
-    new THREE.BoxGeometry(0.8, 1.2, 0.1),
+    new THREE.BoxGeometry(1.6, 2.4, 0.2),
     new THREE.MeshStandardMaterial({ color: 0x8B4513 })
   );
-  backrest.position.set(0, 1.1, -0.35);
+  backrest.position.set(0, 2.2, -0.7);
   group.add(backrest);
 
-  // Legs
-  const legGeometry = new THREE.CylinderGeometry(0.05, 0.05, 0.5, 6);
+  const legGeometry = new THREE.CylinderGeometry(0.1, 0.1, 1, 6);
   const legMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
   
   const positions = [
-    [-0.3, 0.25, 0.3],
-    [0.3, 0.25, 0.3],
-    [-0.3, 0.25, -0.3],
-    [0.3, 0.25, -0.3]
+    [-0.6, 0.5, 0.6],
+    [0.6, 0.5, 0.6],
+    [-0.6, 0.5, -0.6],
+    [0.6, 0.5, -0.6]
   ];
 
   positions.forEach(([x, y, z]) => {
