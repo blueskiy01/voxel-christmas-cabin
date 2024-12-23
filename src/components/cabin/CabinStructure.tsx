@@ -40,7 +40,7 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   floor.position.y = -0.1;
   scene.add(floor);
 
-  // Left wall with cutout
+  // Left wall with window cutout
   const leftWallShape = new THREE.Shape();
   leftWallShape.moveTo(-15, 0);
   leftWallShape.lineTo(15, 0);
@@ -48,7 +48,7 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   leftWallShape.lineTo(-15, 8);
   leftWallShape.lineTo(-15, 0);
 
-  // Create cutout hole
+  // Create window cutout
   const leftHole1 = new THREE.Path();
   leftHole1.moveTo(-8, 2);
   leftHole1.lineTo(-2, 2);
@@ -72,7 +72,7 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
   leftWall.position.set(-15, 0, 0);
   scene.add(leftWall);
 
-  // Add window frame for the cutout
+  // Add window frame
   const addWindowFrame = (x: number, z: number) => {
     // Top frame
     const topFrameGeometry = new THREE.BoxGeometry(0.3, 0.3, 6.2);
@@ -97,16 +97,16 @@ export const setupCabinStructure = (scene: THREE.Scene) => {
     scene.add(rightFrame);
   };
 
-  // Add frame for the cutout
+  // Add window frame
   addWindowFrame(-14.9, -5);
 
-  // Right wall (no windows)
+  // Right wall
   const rightWall = new THREE.Mesh(leftWallGeometry, logMaterial);
   rightWall.position.set(15, 0, 0);
   rightWall.rotation.y = -Math.PI / 2;
   scene.add(rightWall);
 
-  // Back wall (no windows)
+  // Back wall
   const backWallShape = new THREE.Shape();
   backWallShape.moveTo(-15, 0);
   backWallShape.lineTo(15, 0);
