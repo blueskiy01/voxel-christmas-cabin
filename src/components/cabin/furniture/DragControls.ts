@@ -8,9 +8,9 @@ export const setupDragControls = (
   const raycaster = new THREE.Raycaster();
   const mouse = new THREE.Vector2();
   let selectedObject: THREE.Object3D | null = null;
-  let isDragging = false;
   const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0));
   const intersectionPoint = new THREE.Vector3();
+  let isPlacingFurniture = false;
 
   // Create delete button
   const deleteButton = document.createElement('button');
@@ -42,9 +42,10 @@ export const setupDragControls = (
       
       if (parent.userData.draggable) {
         selectedObject = parent;
-        isDragging = true;
-        renderer.domElement.style.cursor = 'grabbing';
+        isPlacingFurniture = true;
+        renderer.domElement.style.cursor = 'move';
         
+        // Update delete button position
         const vector = new THREE.Vector3();
         vector.setFromMatrixPosition(selectedObject.matrixWorld);
         vector.project(camera);
@@ -64,7 +65,7 @@ export const setupDragControls = (
   const onMouseMove = (event: MouseEvent) => {
     event.preventDefault();
     
-    if (isDragging && selectedObject) {
+    if (isPlacingFurniture && selectedObject) {
       mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
       mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
@@ -75,6 +76,7 @@ export const setupDragControls = (
         selectedObject.position.z = intersectionPoint.z;
       }
 
+      // Update delete button position
       const vector = new THREE.Vector3();
       vector.setFromMatrixPosition(selectedObject.matrixWorld);
       vector.project(camera);
@@ -89,7 +91,7 @@ export const setupDragControls = (
 
   const onMouseUp = (event: MouseEvent) => {
     event.preventDefault();
-    isDragging = false;
+    isPlacingFurniture = false;
     renderer.domElement.style.cursor = 'auto';
   };
 
