@@ -84,7 +84,7 @@ This project is licensed under the MIT License. See the LICENSE file for details
 For questions or support, contact us at:  
 - GitHub Issues: [Submit an issue](https://github.com/your-username/voxel-christmas-cabin/issues)
 ## Citation
-If you build upon Grovly, please use the following citation:
+If you build upon this project, please use the following citation:
 ```BibTeX
 @misc{Voxel Christmas Cabin,
     title = {Voxel Christmas Cabin},
